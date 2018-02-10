@@ -1,0 +1,10 @@
+{
+   "produits" : [
+        {
+            "nom" : "stylo",
+            "id" : 1,
+            "prix": 12.7,
+            "description" : "bah, un stylo"
+        }
+    ]
+}
