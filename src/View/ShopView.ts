@@ -1,6 +1,5 @@
 import { ShopController } from "../export";
 import * as $ from "jquery";
-import {Shop} from "../Model/Shop";
 
 interface IShopView {
     controller:ShopController;
@@ -26,19 +25,19 @@ export class ShopView implements IShopView{
                                 "<input type='button' class='btn btn-primary' value='Ajouter au panier' onclick='alert("+products[i].id+")'/>"+
                             "</div>"+
                         "</div>"+
-                    "</div>"
+                    "</div>";
         }
 
         html += "<div class='w-100 text-right' id='divPagination'>" +
                     "<ul class='pagination float-right'>" +
-                        "<li class='page-item'><a class='page-link' onclick='"+this.controller.updateView(this.pagination-1)+"'>Précédent</a></li>";
+                        "<li class='page-item'><a class='page-link' onclick=''>Précédent</a></li>";
 
 
         for(let y = 1;y < Math.ceil(products.length / 10); y++){
-            html +=     "<li class='page-item'><a class='page-link' onclick='"+this.controller.updateView(y)+"'>"+y+"</a></li>";
+            html +=     "<li class='page-item'><a class='page-link' onclick=''>"+y+"</a></li>";
         }
 
-        html +=         "<li class='page-item'><a class='page-link' onclick='"+this.controller.updateView(this.pagination+1)+"'>Suivant</a></li>" +
+        html +=         "<li class='page-item'><a class='page-link' onclick=''>Suivant</a></li>" +
                     "</ul>"+
                 "</div>";
 
