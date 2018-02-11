@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-
     <h1 class="px-1">Laboratoire 1</h1>
     <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -28,11 +27,148 @@
             </ul>
         </div>
     </nav>
-    <div class="container-fluid" id="mainContent"></div>
-    <div class="fixed-bottom bg-dark" id="footer"></div>
+    <div class="container-fluid my-3" id="mainContent">
+
+    </div>
+    <!--<div class="fixed-bottom bg-dark" id="footer"></div>-->
     <script src="dist/bundle.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
 </html>
+
+<!--
+//Alerte succès
+<div class="alert alert-success" role="alert">
+    Produit ajouté au panier avec succès.
+</div>
+
+//Liste
+<h2>Nos Produits</h2>
+<div class="float-left p-3" id="divProduct">
+    <div class="card">
+        <img src="images/test.jpg" class="card-img-top"/>
+        <div class="card-body text-center">
+            <h3 class="card-title"><a href="#">Test</a></h3>
+            <p class="card-text">Prix: 20.99 $</p>
+            <input type="button" class="btn btn-primary" value="Ajouter au panier"/>
+        </div>
+    </div>
+</div>
+<div class="w-100 text-right" id="divPagination">
+    <ul class="pagination float-right">
+        <li class="page-item"><a class="page-link" href="#">Précédent</a></li>
+        <li class="page-item"><a class="page-link" href="#">1</a></li>
+        <li class="page-item"><a class="page-link" href="#">2</a></li>
+        <li class="page-item"><a class="page-link" href="#">3</a></li>
+        <li class="page-item"><a class="page-link" href="#">Suivant</a></li>
+    </ul>
+</div>
+
+//Description
+<h2>Description</h2>
+<div class="media my-3 border rounded">
+    <img class="img-fluid rounded" src="images/test.jpg"/>
+    <div class="media-body mx-3">
+        <h1>Test</h1>
+        <div><b>Prix:</b> 20.99 $</div>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent mi tellus, tempus quis felis eu, faucibus cursus libero. Nulla facilisi. Praesent tempus justo in purus mollis, quis cursus tortor venenatis. Curabitur vel pellentesque massa. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In sit amet metus ut magna posuere efficitur at vulputate enim. Aliquam a pellentesque est, ac sodales lectus. Nulla malesuada vehicula urna sit amet viverra. Phasellus risus metus, ultricies ut turpis nec, placerat commodo sapien. Proin placerat efficitur cursus.</p>
+        <div class=""><input type="button" class="btn btn-primary" value="Ajouter au panier"/></div>
+    </div>
+</div>
+
+//Panier
+<h2>Panier</h2>
+<div class="border rounded-top">
+    <table id="tablePanier" class="table table-sm text-right m-0">
+        <thead class="thead-light">
+        <tr>
+            <th colspan="2" class="p-2 border-0 text-left">Produit</th>
+            <th class="p-2 border-0" id="thPanierQte">Qté</th>
+            <th class="p-2 border-0">Prix</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="text-center"><img src="Images/Test.jpg"/></td>
+            <td class="text-left"><h5>Test</h5></td>
+            <td>2</td>
+            <td>41.98 $</td>
+        </tr>
+        </tbody>
+    </table>
+    <table class="text-right float-right" id="tablePanierTotal">
+        <tr>
+            <td colspan="2"><hr /></td>
+        </tr>
+        <tr>
+            <td><b>Sous-total:</b></td>
+            <td>40.99 $</td>
+        </tr>
+        <tr>
+            <td><b>TPS:</b></td>
+            <td>40.99 $</td>
+        </tr>
+        <tr>
+            <td><b>TVQ:</b></td>
+            <td>40.99 $</td>
+        </tr>
+
+        <tr>
+            <td colspan="2"><hr /></td>
+        </tr>
+        <tr>
+            <td><b>Total:</b></td>
+            <td>40.99 $</td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="button" class="btn btn-primary float-right mt-3" value="Payer"/></td>
+        </tr>
+    </table>
+</div>
+
+//Informations de paiement
+<div class="form-group mx-auto border rounded w-25 p-3">
+    <h3>Informations de paiement</h3>
+    <label for="txtNom">Nom:</label><input type="text" class="form-control" id="txtNom" />
+    <label for="txtCarte"># Carte: </label><input type="text" class="form-control" id="txtCarte"/>
+    <label for="txtSec"># Sécurité: </label><input type="text" class="form-control w-25" id="txtSec"/>
+    <label for="txtDate">Date Expiration: </label><input type="date" class="form-control w-50" id="txtDate"/>
+    <div class="text-right"><input type="button" class="btn btn-primary mt-3" value="Confirmer"/></div>
+</div>
+
+//Admin Connexion
+<div class="form-group mx-auto border rounded w-25 p-3">
+    <h3>Administration</h3>
+    <label for="txtUsername">Utilisateur:</label><input type="text" class="form-control" id="txtUsername" />
+    <label for="txtPassword">Mot de passe: </label><input type="text" class="form-control" id="txtPassword"/>
+    <div class="text-right"><input type="button" class="btn btn-primary mt-3" value="Connexion"/></div>
+</div>
+
+//Admin liste des produits
+<h2>Administration</h2>
+<div class="border rounded-top">
+    <table id="tableAdmin" class="table table-sm text-left m-0">
+        <thead class="thead-light">
+        <tr>
+            <th class="p-2 border-0">Image</th>
+            <th class="p-2 border-0">Nom</th>
+            <th class="p-2 border-0">Description</th>
+            <th class="p-2 border-0">Prix</th>
+            <th class="border-0"></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td class="text-center"><img src="Images/Test.jpg"/></td>
+            <td class="text-left">Test</td>
+            <td class="text-left">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent mi tellus, tempus quis felis eu, faucibus cursus libero. Nulla facilisi. Praesent tempus justo in purus mollis, quis cursus tortor venenatis. Curabitur vel pellentesque massa. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. In sit amet metus ut magna posuere efficitur at vulputate enim. Aliquam a pellentesque est, ac sodales lectus. Nulla malesuada vehicula urna sit amet viverra. Phasellus risus metus, ultricies ut turpis nec, placerat commodo sapien. Proin placerat efficitur cursus.</td>
+            <td id="tdAdminPrix">41.98 $</td>
+            <td class="text-center align-middle"><input type="button" class="btn btn-danger" value="X"/></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="text-right"><input type="button" class="btn btn-primary mt-3" value="Ajouter"/></div>
+-->
