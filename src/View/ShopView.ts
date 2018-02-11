@@ -1,19 +1,19 @@
-import { ItemController } from "../export";
+import { ShopController } from "../export";
 import * as $ from "jquery";
 import {Shop} from "../Model/Shop";
 
 interface IShopView {
-    model:Shop;
+    controller:ShopController;
     pagination:number;
 }
 export class ShopView implements IShopView{
-    model:Shop;
+    controller:ShopController;
     pagination:number;
-    constructor(model:Shop,pagination:number){
-        this.model = model;
+    constructor(controller:ShopController,pagination:number){
+        this.controller = controller;
         this.pagination = pagination;
 
-        let products = this.model.products;
+        let products = this.controller.model.products;
         let html = "";
 
         for(let i = (this.pagination * 10);i < (this.pagination * 10) + 10;i++){
@@ -31,14 +31,14 @@ export class ShopView implements IShopView{
 
         html += "<div class='w-100 text-right' id='divPagination'>" +
                     "<ul class='pagination float-right'>" +
-                        "<li class='page-item'><a class='page-link' onclick='alert("+(this.pagination-1)+")'>Précédent</a></li>";
+                        "<li class='page-item'><a class='page-link' onclick='"+this.controller.updateView(this.pagination-1)+"'>Précédent</a></li>";
 
 
         for(let y = 1;y < Math.ceil(products.length / 10); y++){
-            html +=     "<li class='page-item'><a class='page-link' onclick='alert("+y+")'>"+y+"</a></li>";
+            html +=     "<li class='page-item'><a class='page-link' onclick='"+this.controller.updateView(y)+"'>"+y+"</a></li>";
         }
 
-        html +=         "<li class='page-item'><a class='page-link' onclick='alert("+(this.pagination+1)+")'>Suivant</a></li>" +
+        html +=         "<li class='page-item'><a class='page-link' onclick='"+this.controller.updateView(this.pagination+1)+"'>Suivant</a></li>" +
                     "</ul>"+
                 "</div>";
 
