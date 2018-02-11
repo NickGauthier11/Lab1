@@ -3,7 +3,6 @@ import { ItemModel } from '../export';
 
 export class Shop {
     products : ItemModel[];
-    jsonFile : any;
 
     constructor(){
         if (!localStorage.shop)
@@ -15,62 +14,47 @@ export class Shop {
 
     public addItem (name:string, image:string, price:number, description:string) {
         let id = Number(localStorage.lastId);
-        this.products.push( new ItemModel(
+        this.products[ String(id) ] =  new ItemModel(
             id,
             "produit " + id,
             "http://lorempixel.com/200/200",
             price,
             description
-        ));
-        this.saveModification();
+        );
+        this.saveModifications();
         id++;
         localStorage.lastId = id;
     }
 
     public removeItem (id:number) {
-        let itemIndex = this.findItemIndexFromId(id);
-        if (itemIndex == -1)
-            return;
-        delete this.products[itemIndex];
-        this.saveModification();
+        delete this.products[String(id)];
+        this.saveModifications();
     }
 
     public modifyItem (id:number, name:string, image:string, price:number, description:string) {
-        let itemIndex = this.findItemIndexFromId(id);
-        console.log(itemIndex)
-        if (itemIndex == -1)
-            return;
-        let item:ItemModel =  this.products[itemIndex];
+        let item:ItemModel =  this.products[String(id)];
         //item.modify(name,image,price,description);
         item.nom = name;
         item.description = description;
         item.prix = price;
-        this.saveModification();
+        this.saveModifications();
     }
 
-    private saveModification () {
+    private saveModifications () {
         localStorage.setItem("shop", JSON.stringify({ produits: this.products}));
-    }
-
-    private findItemIndexFromId(id:number) : number {
-        for (let i = 0; i < this.products.length; i++)
-            if (this.products[i].id == id)
-                return  i;
-        return -1;
-       
     }
 
     private createDatabase(){
         this.products = [];
 
         for (let i = 0; i < 100; i++)
-            this.products.push(new ItemModel(
+            this.products[String(i)] = new ItemModel(
                 i,
                 "produit " + (i + 1),
                 "http://lorempixel.com/200/200",
                 (i * 3 + 12 * 1 - 2) % 1026,
                 "description du produit " + (i + 1)
-            ));
+            );
         localStorage.setItem("shop", JSON.stringify({ produits: this.products}));
         localStorage.setItem("lastId", "100");
     }
