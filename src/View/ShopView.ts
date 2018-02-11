@@ -28,16 +28,17 @@ export class ShopView implements IShopView{
                     "</div>";
         }
 
+
         html += "<div class='w-100 text-right' id='divPagination'>" +
                     "<ul class='pagination float-right'>" +
-                        "<li class='page-item'><a class='page-link' onclick=''>Précédent</a></li>";
+                        "<li class='page-item'><a class='page-link' onclick='alert("+(this.pagination - 1)+")'>Précédent</a></li>";
 
 
         for(let y = 1;y < Math.ceil(products.length / 10); y++){
-            html +=     "<li class='page-item'><a class='page-link' onclick=''>"+y+"</a></li>";
+            html +=     "<li class='page-item'><a class='page-link' onclick='alert("+(y-1)+")'>"+y+"</a></li>";
         }
 
-        html +=         "<li class='page-item'><a class='page-link' onclick=''>Suivant</a></li>" +
+        html +=         "<li class='page-item'><a class='page-link' onclick='alert("+(this.pagination + 1)+")'>Suivant</a></li>" +
                     "</ul>"+
                 "</div>";
 
