@@ -16,8 +16,7 @@ export class Basket {
     }
 
     public addItem (id:number) : void{
-        let index = this.shop.findItemIndexFromId(id);
-        this.products.push(this.shop.products[index].id);
+        this.products.push(id);
         this.products.sort();
         this.saveModifications();
     }
@@ -30,11 +29,10 @@ export class Basket {
     }
 
     private saveModifications() : void{
-        String(this.products);
         localStorage.setItem("kart", JSON.stringify({produits :this.products}));
     }
 
     public getItemFromid(id:number) : ItemModel {
-        return this.shop.products[id];
+        return this.shop.products[String(id)];
     }
 }
