@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.html",
   "scripts": {
+    "dev": "webpack",
     "build": "rimraf dist && webpack --config webpack.config.js --progress --profile --bail"
   },
   "keywords": [],
@@ -11,14 +12,18 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jquery": "^3.3.0",
+    "@types/node": "^9.4.5",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "bootstrap": "^4.0.0",
     "html-loader": "^0.5.5",
     "jquery": "^3.3.1",
+    "jsonloader": "^1.0.1",
     "rimraf": "^2.6.2",
     "ts-loader": "^3.3.1",
     "typescript": "^2.6.2",
-    "webpack": "^3.10.0"
+    "webpack": "^3.11.0"
+  },
+  "dependencies": {
   }
 }

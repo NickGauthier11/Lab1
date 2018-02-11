@@ -2,6 +2,7 @@
 var path = require('path');
 module.exports = {
     entry: "./src/index.ts",
+    watch : true,
     output: {
         path: path.resolve(__dirname, './dist'),
         filename: "bundle.js"
@@ -27,5 +28,8 @@ module.exports = {
                 loader: "html-loader?exportAsEs6Default"
             }
         ]
+    },
+    node: {
+        fs: "empty"
     }
 };
