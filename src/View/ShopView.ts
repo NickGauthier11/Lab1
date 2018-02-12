@@ -2,18 +2,19 @@ import * as $ from "jquery";
 import { ItemModel } from "../Model/itemModel";
 
 interface IShopView {
-    pagination:number;
 }
 
 export default class ShopView implements IShopView{
-    pagination:number;
     products: ItemModel[];
-    constructor(products:ItemModel[],pagination:number){
-        this.pagination = pagination;   //Not usefull for the moment
-        this.products = products;
+    isAdmin:boolean;
+    isInbasket:boolean;
+    constructor(products: ItemModel[], isAdmin:boolean, isInbasket:boolean){
+        this.isInbasket = isInbasket;
+        this.isAdmin = isAdmin;
+        this.products = products; 
     }
 
-    public injectProducts (page:number, isAdmin:boolean, isInbasket:boolean){
+    public displayPage (page:number){
         let html = "";
         
                 for(let i = (page * 10);i < (page * 10) + 10;i++){
@@ -22,28 +23,42 @@ export default class ShopView implements IShopView{
                                     "<img src='"+this.products[i].image+"' class='card-img-top'/>"+
                                     "<div class='card-body text-center'>"+
                                         "<h3 class='card-title'><a href='#'>"+this.products[i].nom+"</a></h3>"+
-                                        "<p class='card-text'>Prix: "+this.products[i].prix+"$</p>"+
-                                        "<input type='button' class='btn btn-primary' value='Ajouter au panier' onclick='alert("+this.products[i].id+")'/>"+
-                                    "</div>"+
+                                        "<p class='card-text'>Prix: "+this.products[i].prix+"$</p>";
+                if (this.isInbasket)
+                html += "<input type='button' class='btn btn-danger' value='" + this.products[i].id + "' onclick='alert("+this.products[i].id+")'/>";
+                else
+                    html += "<input type='button' class='btn btn-primary' value='" + this.products[i].id + "' onclick='alert("+this.products[i].id+")'/>";
+                html +=                "</div>"+
                                 "</div>"+
                             "</div>";
                 }
         
         
                 html += "<div class='w-100 text-right' id='divPagination'>" +
-                            "<ul class='pagination float-right'>" +
-                                "<li class='page-item'><a class='page-link' onclick='alert("+(page - 1)+")'>Précédent</a></li>";
+                            "<ul class='pagination float-right'>"
+                if (page > 0)
+                    html += "<li class='page-item preview'><a class='page-link' >Précédent</a></li>";
         
         
                 for(let y = 1;y < Math.ceil(this.products.length / 10); y++){
-                    html +=     "<li class='page-item'><a class='page-link' onclick='alert("+(y-1)+")'>"+y+"</a></li>";
+                    html +=     "<li class='page-item page-number'><a class='page-link' >"+y+"</a></li>";
+                    //Here we should add the buttons one by one to add the function onclick
                 }
         
-                html +=         "<li class='page-item'><a class='page-link' onclick='alert("+(page + 1)+")'>Suivant</a></li>" +
+                html +=         "<li class='page-item next'><a class='page-link'>Suivant</a></li>" +
                             "</ul>"+
                         "</div>";
-        
-                $("#mainContent").html(html);
+                
+        $("#mainContent").html(html);
         //Add buttons for edit and for remove from basket
+        let shopView:ShopView = this;
+        $("#mainContent .preview").click({view:shopView}, function(event){event.data.view.displayPage(page - 1);});
+        $("#mainContent .page-number").click();
+        $("#mainContent .next").click({view:shopView}, function(event){event.data.view.displayPage(page + 1);});
+
+    }
+
+    public test(){
+        console.log(this);
     }
 }

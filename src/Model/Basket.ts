@@ -1,7 +1,7 @@
 import { ItemModel } from '../export';
 import Shop from './Shop';
 
-export class Basket {
+export default class Basket {
     products : number[];
     constructor(){
         if (!localStorage.basket){
@@ -30,7 +30,7 @@ export class Basket {
         localStorage.setItem("kart", JSON.stringify({produits :this.products}));
     }
 
-    public getItemFromid(id:number) : ItemModel {
+    public getItemFromId(id:number) : ItemModel {
         let shop = new Shop();
         return shop.products[String(id)];
     }
@@ -38,5 +38,13 @@ export class Basket {
     public clear(){
         this.products = [];
         this.saveModifications();
+    }
+
+    public getItems(): ItemModel[]{
+        let items:ItemModel[] = [];
+        this.products.forEach(element => {
+            items.push(this.getItemFromId(element));
+        });
+        return items;
     }
 }
