@@ -4,6 +4,8 @@ export function login (nickname:string ,password:string) : boolean {
     } else return false; 
 }
 
+//These should be real functions with a node call to a database
+
 export function isUserAdmin () : boolean {
     return localStorage.getItem("connected") == "true";
 }
