@@ -53,8 +53,10 @@ export default class ShopView implements IShopView{
         //Add buttons for edit and for remove from basket
         let shopView:ShopView = this;
         $("#mainContent .preview").click({view:shopView}, function(event){event.data.view.displayPage(page - 1);});
-        $("#mainContent .page-number").click();
         $("#mainContent .next").click({view:shopView}, function(event){event.data.view.displayPage(page + 1);});
+        $("#mainContent .page-number").each(function(index){
+            $(this).click({view:shopView}, function(event){event.data.view.displayPage(index - 1);});
+        });
 
     }
 
