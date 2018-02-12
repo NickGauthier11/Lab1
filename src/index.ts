@@ -22,10 +22,9 @@ switch(page){
     case "panier":
         break;
     case "connexion":
-        connection(getURLParameter("nickname"), getURLParameter("password"));
+        connection();
         break;
     case "edit":
-        
         break;
     case "detail":
         let id:string = getURLParameter("id");

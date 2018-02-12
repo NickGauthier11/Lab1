@@ -35,4 +35,9 @@ export class Basket {
     public getItemFromid(id:number) : ItemModel {
         return this.shop.products[String(id)];
     }
+
+    public clear(){
+        this.products = [];
+        this.saveModifications();
+    }
 }
