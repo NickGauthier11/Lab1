@@ -8,6 +8,5 @@ export { ItemController } from "./Controller/itemController";
 
 // export { Shop } from "./Model/Shop";
 export { Basket } from "./Model/Basket";
-export { ConnectionView } from "./View/ConnectionView";
 
 
