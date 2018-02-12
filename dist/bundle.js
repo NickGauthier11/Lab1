@@ -60,11 +60,35 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = 2);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var base_1 = __webpack_require__(3);
+exports.View = base_1.View;
+var base_2 = __webpack_require__(4);
+exports.Model = base_2.Model;
+var base_3 = __webpack_require__(5);
+exports.Controller = base_3.Controller;
+var itemView_1 = __webpack_require__(6);
+exports.ItemView = itemView_1.ItemView;
+var itemModel_1 = __webpack_require__(7);
+exports.ItemModel = itemModel_1.ItemModel;
+var itemController_1 = __webpack_require__(8);
+exports.ItemController = itemController_1.ItemController;
+// export { Shop } from "./Model/Shop";
+var Basket_1 = __webpack_require__(10);
+exports.Basket = Basket_1.Basket;
+
+/***/ }),
+/* 1 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10435,31 +10459,6 @@ return jQuery;
 
 
 /***/ }),
-/* 1 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var export_1 = __webpack_require__(2);
-function getURLParameter(name) {
-    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
-}
-var page = getURLParameter("page");
-switch (page) {
-    case "panier":
-        break;
-    case "connexion":
-        break;
-    default:
-        var itemModel = new export_1.ItemModel(1, "Test", "test.jpg", 10.99, "Lorem ipsum");
-        var itemController = new export_1.ItemController(itemModel);
-        var itemView = new export_1.ItemView(itemController);
-        break;
-}
-
-/***/ }),
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10467,18 +10466,30 @@ switch (page) {
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var base_1 = __webpack_require__(3);
-exports.View = base_1.View;
-var base_2 = __webpack_require__(4);
-exports.Model = base_2.Model;
-var base_3 = __webpack_require__(5);
-exports.Controller = base_3.Controller;
-var itemView_1 = __webpack_require__(6);
-exports.ItemView = itemView_1.ItemView;
-var itemModel_1 = __webpack_require__(7);
-exports.ItemModel = itemModel_1.ItemModel;
-var itemController_1 = __webpack_require__(8);
-exports.ItemController = itemController_1.ItemController;
+var connection_1 = __webpack_require__(11);
+var description_1 = __webpack_require__(14);
+var index_1 = __webpack_require__(12);
+function getURLParameter(name) {
+    return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+}
+var item = getURLParameter("id");
+var page = getURLParameter("page");
+switch (page) {
+    case "panier":
+        break;
+    case "connexion":
+        connection_1.default();
+        break;
+    case "edit":
+        break;
+    case "detail":
+        var id = getURLParameter("id");
+        description_1.default(id);
+        break;
+    default:
+        index_1.default();
+        break;
+}
 
 /***/ }),
 /* 3 */
@@ -10488,7 +10499,7 @@ exports.ItemController = itemController_1.ItemController;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(0);
+var $ = __webpack_require__(1);
 var View = /** @class */function () {
     function View(_controller) {
         this.controller = _controller;
@@ -10572,11 +10583,11 @@ exports.Controller = Controller;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(0);
+var $ = __webpack_require__(1);
 var ItemView = /** @class */function () {
     function ItemView(controller) {
         this.controller = controller;
-        $("#mainContent").html("<div class='row m-5'>" + "<div class='col-3 text-center'><img class='align-middle' src='images/" + this.controller.itemModel.image + "'/></div>" + "<div class='col-8' style='height:500px'>" + "<h1 class='h-20'>" + this.controller.itemModel.nom + "</h1>" + "<p class='h-60'>" + this.controller.itemModel.description + "</p>" + "<div class='align-bottom h-20'>" + this.controller.itemModel.prix + " $</div>" + "</div>" + "</div>");
+        $("#mainContent").html("<div class='row m-5'>" + "<div class='col-3 text-center'><img class='align-middle' src='" + this.controller.itemModel.image + "'/></div>" + "<div class='col-8' style='height:500px'>" + "<h1 class='h-20'>" + this.controller.itemModel.nom + "</h1>" + "<p class='h-60'>" + this.controller.itemModel.description + "</p>" + "<div class='align-bottom h-20'>" + this.controller.itemModel.prix + " $</div>" + "</div>" + "</div>");
     }
     return ItemView;
 }();
@@ -10592,11 +10603,18 @@ exports.ItemView = ItemView;
 Object.defineProperty(exports, "__esModule", { value: true });
 var ItemModel = /** @class */function () {
     function ItemModel(id, nom, image, prix, description) {
+        this.id = id;
         this.nom = nom;
         this.image = image;
         this.prix = prix;
         this.description = description;
     }
+    ItemModel.prototype.modify = function (nom, image, prix, description) {
+        this.nom = nom;
+        this.image = image;
+        this.prix = prix;
+        this.description = description;
+    };
     return ItemModel;
 }();
 exports.ItemModel = ItemModel;
@@ -10616,6 +10634,198 @@ var ItemController = /** @class */function () {
     return ItemController;
 }();
 exports.ItemController = ItemController;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var export_1 = __webpack_require__(0);
+var Shop = /** @class */function () {
+    function Shop() {
+        if (!localStorage.shop) this.createDatabase();else {
+            this.products = JSON.parse(localStorage.getItem("shop")).produits;
+        }
+    }
+    Shop.prototype.addItem = function (name, image, price, description) {
+        var id = Number(localStorage.lastId);
+        this.products[String(id)] = new export_1.ItemModel(id, "produit " + id, "http://lorempixel.com/200/200", price, description);
+        this.saveModifications();
+        id++;
+        localStorage.lastId = id;
+    };
+    Shop.prototype.removeItem = function (id) {
+        delete this.products[String(id)];
+        this.saveModifications();
+    };
+    Shop.prototype.modifyItem = function (id, name, image, price, description) {
+        var item = this.products[String(id)];
+        //item.modify(name,image,price,description);
+        item.nom = name;
+        item.description = description;
+        item.prix = price;
+        this.saveModifications();
+    };
+    Shop.prototype.saveModifications = function () {
+        localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
+    };
+    Shop.prototype.createDatabase = function () {
+        this.products = [];
+        for (var i = 0; i < 100; i++) this.products[String(i)] = new export_1.ItemModel(i, "produit " + (i + 1), "http://lorempixel.com/200/200", (i * 3 + 12 * 1 - 2) % 1026, "description du produit " + (i + 1));
+        localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
+        localStorage.setItem("lastId", "100");
+    };
+    return Shop;
+}();
+exports.default = Shop;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Shop_1 = __webpack_require__(9);
+var Basket = /** @class */function () {
+    function Basket() {
+        if (!localStorage.basket) {
+            this.products = [];
+            this.saveModifications();
+        } else {
+            this.products = JSON.parse(localStorage.getItem("kart")).produits;
+        }
+    }
+    Basket.prototype.addItem = function (id) {
+        this.products.push(id);
+        this.products.sort();
+        this.saveModifications();
+    };
+    Basket.prototype.removeItem = function (id) {
+        var index = this.products.indexOf(id);
+        if (index != -1) this.products.splice(index);
+        this.saveModifications();
+    };
+    Basket.prototype.saveModifications = function () {
+        localStorage.setItem("kart", JSON.stringify({ produits: this.products }));
+    };
+    Basket.prototype.getItemFromid = function (id) {
+        var shop = new Shop_1.default();
+        return shop.products[String(id)];
+    };
+    Basket.prototype.clear = function () {
+        this.products = [];
+        this.saveModifications();
+    };
+    return Basket;
+}();
+exports.Basket = Basket;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function connection() {
+    //No data needed here
+    //Import vue
+    //add verification function to button validate
+    //  if (login(nickname, password))
+    //      Launch page index with flag connected
+    //  else
+    //      Launch page connection again
+}
+exports.default = connection;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Shop_1 = __webpack_require__(9);
+var ShopView_1 = __webpack_require__(13);
+var Connection_1 = __webpack_require__(15);
+function index() {
+    var shop = new Shop_1.default();
+    var shopView = new ShopView_1.default(shop.products, 10);
+    shopView.injectProducts(0, Connection_1.isUserAdmin(), false);
+}
+exports.default = index;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var $ = __webpack_require__(1);
+var ShopView = /** @class */function () {
+    function ShopView(products, pagination) {
+        this.pagination = pagination; //Not usefull for the moment
+        this.products = products;
+    }
+    ShopView.prototype.injectProducts = function (page, isAdmin, isInbasket) {
+        var html = "";
+        for (var i = page * 10; i < page * 10 + 10; i++) {
+            html += "<div class='float-left p-3' id='divProduct'>" + "<div class='card'>" + "<img src='" + this.products[i].image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='#'>" + this.products[i].nom + "</a></h3>" + "<p class='card-text'>Prix: " + this.products[i].prix + "$</p>" + "<input type='button' class='btn btn-primary' value='Ajouter au panier' onclick='alert(" + this.products[i].id + ")'/>" + "</div>" + "</div>" + "</div>";
+        }
+        html += "<div class='w-100 text-right' id='divPagination'>" + "<ul class='pagination float-right'>" + "<li class='page-item'><a class='page-link' onclick='alert(" + (page - 1) + ")'>Précédent</a></li>";
+        for (var y = 1; y < Math.ceil(this.products.length / 10); y++) {
+            html += "<li class='page-item'><a class='page-link' onclick='alert(" + (y - 1) + ")'>" + y + "</a></li>";
+        }
+        html += "<li class='page-item'><a class='page-link' onclick='alert(" + (page + 1) + ")'>Suivant</a></li>" + "</ul>" + "</div>";
+        $("#mainContent").html(html);
+        //Add buttons for edit and for remove from basket
+    };
+    return ShopView;
+}();
+exports.default = ShopView;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function description(id) {
+    //Fetch item from id
+    //Call view
+}
+exports.default = description;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function login(nickname, password) {
+    if (nickname == "admin" && password == "admin") {
+        localStorage.setItem("connected", "true");
+    } else return false;
+}
+exports.login = login;
+//These should be real functions with a node call to a database
+function isUserAdmin() {
+    return localStorage.getItem("connected") == "true";
+}
+exports.isUserAdmin = isUserAdmin;
 
 /***/ })
 /******/ ]);

@@ -1,7 +1,7 @@
 import { ItemModel } from '../export';
 
 
-export class Shop {
+export default class Shop {
     products : ItemModel[];
 
     constructor(){
