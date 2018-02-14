@@ -4,6 +4,6 @@ import {isUserAdmin} from "../Model/Connection"
 
 export default function index(){
     let shop = new Shop();
-    let shopView = new ShopView(shop.products, isUserAdmin(),false);
+    let shopView = new ShopView(shop.products,"index");
     shopView.displayPage(0);
 }

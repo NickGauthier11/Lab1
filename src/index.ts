@@ -17,6 +17,7 @@ let item = getURLParameter("id");
 let page = getURLParameter("page");
 switch(page){
     case "panier":
+        panier();
         break;
     case "connexion":
         connection();
@@ -24,8 +25,7 @@ switch(page){
     case "edit":
         break;
     case "detail":
-        let id:string = getURLParameter("id");
-        detail(id);
+        detail(item);
         break;
     default:
         index();

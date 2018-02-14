@@ -4,29 +4,31 @@ import Shop from './Shop';
 export default class Basket {
     products : number[];
     constructor(){
-        if (!localStorage.basket){
+        if (!localStorage.kart){
             this.products = [];
             this.saveModifications();
+            console.log("hi")
         }
         else{
             this.products = (JSON.parse(localStorage.getItem("kart"))).produits;
         }
     }
 
-    public addItem (id:number) : void{
+    public addItem (id:number) : void {
         this.products.push(id);
+        console.log("yeah");
         this.products.sort();
         this.saveModifications();
     }
 
-    public removeItem (id:number) : void{
+    public removeItem (id:number) : void {
         let index = this.products.indexOf(id);
         if (index != -1)
             this.products.splice(index);
         this.saveModifications();
     }
 
-    private saveModifications() : void{
+    private saveModifications() : void {
         localStorage.setItem("kart", JSON.stringify({produits :this.products}));
     }
 

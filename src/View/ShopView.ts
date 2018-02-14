@@ -1,37 +1,35 @@
 import * as $ from "jquery";
 import { ItemModel } from "../Model/itemModel";
+import Basket from "../Model/Basket"
+import Shop from "../Model/Shop"
+import {isUserAdmin} from "../Model/Connection"
 
 interface IShopView {
 }
 
 export default class ShopView implements IShopView{
     products: ItemModel[];
-    isAdmin:boolean;
-    isInbasket:boolean;
-    constructor(products: ItemModel[], isAdmin:boolean, isInbasket:boolean){
-        this.isInbasket = isInbasket;
-        this.isAdmin = isAdmin;
+    pageOptions:String;
+    constructor(products: ItemModel[], pageOptions:string){
         this.products = products; 
+        this.pageOptions = pageOptions;
     }
 
     public displayPage (page:number){
         let html = "";
         
-                for(let i = (page * 10);i < (page * 10) + 10;i++){
-                    html += "<div class='float-left p-3' id='divProduct'>"+
-                                "<div class='card'>"+
-                                    "<img src='"+this.products[i].image+"' class='card-img-top'/>"+
-                                    "<div class='card-body text-center'>"+
-                                        "<h3 class='card-title'><a href='#'>"+this.products[i].nom+"</a></h3>"+
-                                        "<p class='card-text'>Prix: "+this.products[i].prix+"$</p>";
-                if (this.isInbasket)
-                html += "<input type='button' class='btn btn-danger' value='Retirer du panier' onclick='alert("+this.products[i].id+")'/>";
-                else
-                    html += "<input type='button' class='btn btn-primary' value='ajouter au panier' onclick='alert("+this.products[i].id+")'/>";
-                html +=                "</div>"+
-                                "</div>"+
-                            "</div>";
-                }
+            for(let i = (page * 10); i < (page * 10) + 10 && i < this.products.length; i++){
+                html += "<div class='float-left p-3 divProducts''>"+
+                            "<div class='card'>"+
+                                "<img src='" + this.products[i].image + "' class='card-img-top'/>"+
+                                "<div class='card-body text-center'>"+
+                                    "<h3 class='card-title'><a href='?page=detail&id=" + this.products[i].id + "'>" + this.products[i].nom+"</a></h3>"+
+                                    "<p class='card-text'>Prix: "+this.products[i].prix+"$</p>" +
+                                    "<input type='button' class='btn' value='"+this.products[i].id+"' />" +
+                                "</div>" +
+                            "</div>" +
+                        "</div>";
+            }
         
         
                 html += "<div class='w-100 text-right' id='divPagination'>" +
@@ -46,21 +44,55 @@ export default class ShopView implements IShopView{
                 }
                 if (page < Math.ceil(this.products.length / 10) - 2)
                     html +=         "<li class='page-item next'><a class='page-link'>Suivant</a></li>" ;
-                console.log(page);
                 html += "</ul>" + "</div>";
                 
         $("#mainContent").html(html);
-        //Add buttons for edit and for remove from basket
+        new Basket();
+        this.addPagination(page);
+        this.addOptions();
+        
+    }
+
+    private addOptions(){
+        let options = this.pageOptions;
+        $("#mainContent .divProducts input").each(function(index){
+            let id:number  = Number((<HTMLInputElement>this).value);
+            
+            if (options == "basket"){
+                $(this).addClass("btn-danger");
+                (<HTMLInputElement>this).value = "Retirer du panier";
+                $(this).click({}, function(event){
+                    new Basket().removeItem(id);
+                    $(this).parent().parent().parent().remove();
+                });
+            }
+            else if (options == "index" && !isUserAdmin()) {
+                $(this).addClass("btn-primary");
+                (<HTMLInputElement>this).value = "Ajouter au panier";
+                $(this).click({}, function(event){
+                    new Basket().addItem(id);
+                    alert("produit ajouté au pannier");
+                });
+            }
+            else {
+                $(this).addClass("btn-danger");
+                (<HTMLInputElement>this).value = "Retirer produit";
+                $(this).click({}, function(event){
+                    if (confirm("voulez-vous vraiment retirer ce produit? ")){
+                        new Shop().removeItem(id);
+                        $(this).parent().parent().parent().remove();
+                    }
+                });
+            }
+        });
+    }
+
+    private addPagination(page:number){
         let shopView:ShopView = this;
         $("#mainContent .preview").click({view:shopView}, function(event){event.data.view.displayPage(page - 1);});
         $("#mainContent .next").click({view:shopView}, function(event){event.data.view.displayPage(page + 1);});
         $("#mainContent .page-number").each(function(index){
             $(this).click({view:shopView}, function(event){event.data.view.displayPage(index);});
         });
-
-    }
-
-    public test(){
-        console.log(this);
     }
 }
