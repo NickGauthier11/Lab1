@@ -26,6 +26,14 @@ export default class Shop {
         localStorage.lastId = id;
     }
 
+    public addRandomItem(){
+        this.addItem(
+            "nouveau produit ",
+            "http://lorempixel.com/200/200",
+            10,
+            "nouvel objet ajouté récement");
+    }
+
     public removeItem (id:number) {
         delete this.products[String(id)];
         this.saveModifications();
@@ -57,6 +65,10 @@ export default class Shop {
             );
         localStorage.setItem("shop", JSON.stringify({ produits: this.products}));
         localStorage.setItem("lastId", "100");
+    }
+
+    public getItemFromId(id:number) : ItemModel{
+        return this.products[String(id)];
     }
 
     

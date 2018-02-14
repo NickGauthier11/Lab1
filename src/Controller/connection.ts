@@ -1,6 +1,6 @@
 import {isUserAdmin, login} from "../Model/Connection";
 import { ConnectionView } from "../export";
-import * as $ from "jquery";
+import * as $ from "jquery"
 import Shop from "../Model/Shop";
 
 export default function connection(){
@@ -9,8 +9,8 @@ export default function connection(){
     let shop = new Shop();
 
     //Different page if connected or not
-    if(isUserAdmin() == true){
-        view.connected(shop);
+    if( isUserAdmin() ){
+        view.connected(shop.products);
     }else{
         view.connection();
     }

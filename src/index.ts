@@ -1,5 +1,4 @@
 import { ItemModel,ItemView,ItemController } from "./export";
-import {Basket} from "./export";
 
 import connection from "./Controller/connection";
 import panier from "./Controller/panier";
@@ -14,7 +13,7 @@ function getURLParameter(name:string) {
 }
 
 
-let item = getURLParameter("id");
+let item:number = Number(getURLParameter("id"));
 let page = getURLParameter("page");
 switch(page){
     case "panier":
@@ -24,6 +23,7 @@ switch(page){
         connection();
         break;
     case "edit":
+        edit(item);
         break;
     case "detail":
         detail(item);

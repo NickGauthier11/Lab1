@@ -1,6 +1,7 @@
 export function login (nickname:string ,password:string) : boolean {
     if (nickname == "admin" && password == "admin"){
         localStorage.setItem("connected", "true");
+        return true;
     } else return false; 
 }
 
@@ -8,4 +9,8 @@ export function login (nickname:string ,password:string) : boolean {
 
 export function isUserAdmin () : boolean {
     return localStorage.getItem("connected") == "true";
+}
+
+export function deconnect() : void {
+    localStorage.removeItem("connected");
 }

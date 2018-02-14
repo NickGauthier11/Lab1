@@ -32,11 +32,14 @@ export default class ShopView{
         
                 html += "<div class='w-100 text-right' id='divPagination'>" +
                             "<ul class='pagination float-right'>" +
-                                "<li class='page-item'><a class='page-link' onclick='alert("+(page - 1)+")'>Précédent</a></li>";
+                                "<li class='page-item'><a class='page-link'>Précédent</a></li>";
         
         
                 for(let y = 1;y < Math.ceil(this.products.length / 10); y++){
-                    html +=     "<li class='page-item'><a class='page-link' onclick='alert("+(y-1)+")'>"+y+"</a></li>";
+                    let active:string = "";
+                    if (page == y - 1)
+                        active = " active";
+                    html +=     "<li class='page-item" + active + "'><a class='page-link page-number'>"+y+"</a></li>";
                 }
                 if (page < Math.ceil(this.products.length / 10) - 2)
                     html +=         "<li class='page-item next'><a class='page-link'>Suivant</a></li>" ;
@@ -61,22 +64,12 @@ export default class ShopView{
                     $(this).parent().parent().parent().remove();
                 });
             }
-            else if (options == "index" && !isUserAdmin()) {
+            else if (options == "index") {
                 $(this).addClass("btn-primary");
                 (<HTMLInputElement>this).value = "Ajouter au panier";
                 $(this).click({}, function(event){
                     new Basket().addItem(id);
                     alert("produit ajouté au pannier");
-                });
-            }
-            else {
-                $(this).addClass("btn-danger");
-                (<HTMLInputElement>this).value = "Retirer produit";
-                $(this).click({}, function(event){
-                    if (confirm("voulez-vous vraiment retirer ce produit? ")){
-                        new Shop().removeItem(id);
-                        $(this).parent().parent().parent().remove();
-                    }
                 });
             }
         });
@@ -87,8 +80,8 @@ export default class ShopView{
         $("#mainContent .preview").click({view:shopView}, function(event){event.data.view.displayPage(page - 1);});
         $("#mainContent .next").click({view:shopView}, function(event){event.data.view.displayPage(page + 1);});
         $("#mainContent .page-number").each(function(index){
-            let page:number = Number((<HTMLInputElement>this).value);
-            $(this).click({view:shopView}, function(event){event.data.view.displayPage(index);});
+            let page:number = Number(this.innerText);
+            $(this).click({view:shopView}, function(event){event.data.view.displayPage(page - 1);});
         });
     }
 }
