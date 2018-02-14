@@ -4,15 +4,13 @@ import Basket from "../Model/Basket"
 import Shop from "../Model/Shop"
 import {isUserAdmin} from "../Model/Connection"
 
-interface IShopView {
-}
-
-export default class ShopView implements IShopView{
+export default class ShopView{
     products: ItemModel[];
     pageOptions:String;
     constructor(products: ItemModel[], pageOptions:string){
         this.products = products; 
         this.pageOptions = pageOptions;
+
     }
 
     public displayPage (page:number){
@@ -33,21 +31,18 @@ export default class ShopView implements IShopView{
         
         
                 html += "<div class='w-100 text-right' id='divPagination'>" +
-                            "<ul class='pagination float-right'>"
-                if (page > 0)
-                    html += "<li class='page-item preview'><a class='page-link' >Précédent</a></li>";
+                            "<ul class='pagination float-right'>" +
+                                "<li class='page-item'><a class='page-link' onclick='alert("+(page - 1)+")'>Précédent</a></li>";
         
         
                 for(let y = 1;y < Math.ceil(this.products.length / 10); y++){
-                    let active:string = page == y - 1 ? " active" : "";
-                    html +=     "<li class='page-item page-number" + active +"'><a class='page-link' >"+y+"</a></li>";
+                    html +=     "<li class='page-item'><a class='page-link' onclick='alert("+(y-1)+")'>"+y+"</a></li>";
                 }
                 if (page < Math.ceil(this.products.length / 10) - 2)
                     html +=         "<li class='page-item next'><a class='page-link'>Suivant</a></li>" ;
                 html += "</ul>" + "</div>";
                 
         $("#mainContent").html(html);
-        new Basket();
         this.addPagination(page);
         this.addOptions();
         
@@ -92,6 +87,7 @@ export default class ShopView implements IShopView{
         $("#mainContent .preview").click({view:shopView}, function(event){event.data.view.displayPage(page - 1);});
         $("#mainContent .next").click({view:shopView}, function(event){event.data.view.displayPage(page + 1);});
         $("#mainContent .page-number").each(function(index){
+            let page:number = Number((<HTMLInputElement>this).value);
             $(this).click({view:shopView}, function(event){event.data.view.displayPage(index);});
         });
     }

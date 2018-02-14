@@ -1,4 +1,5 @@
 import { ItemModel,ItemView,ItemController } from "./export";
+import {Basket} from "./export";
 
 import connection from "./Controller/connection";
 import panier from "./Controller/panier";

@@ -1,11 +1,30 @@
-import {isUserAdmin, login} from "../Model/Connection"
+import {isUserAdmin, login} from "../Model/Connection";
+import { ConnectionView } from "../export";
+import * as $ from "jquery";
+import Shop from "../Model/Shop";
 
 export default function connection(){
     //No data needed here
-    //Import vue
-    //add verification function to button validate
-    //  if (login(nickname, password))
-    //      Launch page index with flag connected
-    //  else
-    //      Launch page connection again
+    let view = new ConnectionView();
+    let shop = new Shop();
+
+    //Different page if connected or not
+    if(isUserAdmin() == true){
+        view.connected(shop);
+    }else{
+        view.connection();
+    }
+
+
+    $("#btnConnection").on("click",function(){
+        let nickname:string = $("#txtUsername").val().toString();
+        let password:string = $("#txtPassword").val().toString();
+        if (login(nickname, password) != false){
+            //Reload Page
+            window.location.href = "?page=connexion";
+        }else{
+            //Error message
+            view.connectionError();
+        }
+    });
 }
