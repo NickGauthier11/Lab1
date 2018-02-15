@@ -15,7 +15,7 @@ export default class ShopView{
         let html = "";
         
         for(let i = (page * 10); i < (page * 10) + 10 && i < this.products.length; i++){
-            html += "<div class='float-left p-3 divProducts''>"+
+            html += "<div class='float-left p-3 divProducts' id='divProduct'>"+
                         "<div class='card'>"+
                             "<img src='" + this.products[i].image + "' class='card-img-top'/>"+
                             "<div class='card-body text-center'>"+
@@ -32,16 +32,16 @@ export default class ShopView{
                     "<ul class='pagination float-right'>" +
                         "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
 
+
         for(let y = 1;y < Math.ceil(this.products.length / 10) + 1; y++){
             let active:string = "";
             if (page == y - 1)
                 active = " active";
             html += "<li class='page-item" + active + "'><a class='page-link page-number'>"+y+"</a></li>";
         }
-
         html += "<li class='page-item next'><a class='page-link'>Suivant</a></li>" ;
         html += "</ul>" + "</div>";
-                
+
         $("#mainContent").html(html);
         this.addPagination(page);
         this.addOptions();
