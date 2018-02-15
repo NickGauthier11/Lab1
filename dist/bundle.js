@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -71,21 +71,50 @@
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var base_1 = __webpack_require__(3);
-exports.View = base_1.View;
-var base_2 = __webpack_require__(4);
-exports.Model = base_2.Model;
-var base_3 = __webpack_require__(5);
-exports.Controller = base_3.Controller;
-var itemView_1 = __webpack_require__(6);
-exports.ItemView = itemView_1.ItemView;
-var itemModel_1 = __webpack_require__(7);
-exports.ItemModel = itemModel_1.ItemModel;
-var itemController_1 = __webpack_require__(8);
-exports.ItemController = itemController_1.ItemController;
-// export { Shop } from "./Model/Shop";
-var Basket_1 = __webpack_require__(10);
-exports.Basket = Basket_1.Basket;
+var export_1 = __webpack_require__(3);
+var Shop = /** @class */function () {
+    function Shop() {
+        if (!localStorage.shop) this.createDatabase();else {
+            this.products = JSON.parse(localStorage.getItem("shop")).produits;
+        }
+    }
+    Shop.prototype.addItem = function (name, image, price, description) {
+        var id = Number(localStorage.lastId);
+        this.products[String(id)] = new export_1.ItemModel(id, "produit " + id, "Images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", price, description);
+        this.saveModifications();
+        id++;
+        localStorage.lastId = id;
+    };
+    Shop.prototype.addRandomItem = function () {
+        this.addItem("nouveau produit ", "Images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", 10, "nouvel objet ajouté récement");
+    };
+    Shop.prototype.removeItem = function (id) {
+        delete this.products[String(id)];
+        this.saveModifications();
+    };
+    Shop.prototype.modifyItem = function (id, name, image, price, description) {
+        var item = this.products[String(id)];
+        //item.modify(name,image,price,description);
+        item.nom = name;
+        item.description = description;
+        item.prix = price;
+        this.saveModifications();
+    };
+    Shop.prototype.saveModifications = function () {
+        localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
+    };
+    Shop.prototype.createDatabase = function () {
+        this.products = [];
+        for (var i = 0; i < 100; i++) this.products[String(i)] = new export_1.ItemModel(i, "produit " + (i + 1), "Images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", (i * 3 + 12 * 1 - 2) % 1026, "description du produit " + (i + 1));
+        localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
+        localStorage.setItem("lastId", "100");
+    };
+    Shop.prototype.getItemFromId = function (id) {
+        return this.products[String(id)];
+    };
+    return Shop;
+}();
+exports.default = Shop;
 
 /***/ }),
 /* 1 */
@@ -10466,25 +10495,211 @@ return jQuery;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var connection_1 = __webpack_require__(11);
-var description_1 = __webpack_require__(14);
-var index_1 = __webpack_require__(12);
+function login(nickname, password) {
+    if (nickname == "admin" && password == "admin") {
+        localStorage.setItem("connected", "true");
+        return true;
+    } else return false;
+}
+exports.login = login;
+//These should be real functions with a node call to a database
+function isUserAdmin() {
+    return localStorage.getItem("connected") == "true";
+}
+exports.isUserAdmin = isUserAdmin;
+function deconnect() {
+    localStorage.removeItem("connected");
+}
+exports.deconnect = deconnect;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var base_1 = __webpack_require__(8);
+exports.View = base_1.View;
+var base_2 = __webpack_require__(9);
+exports.Model = base_2.Model;
+var base_3 = __webpack_require__(10);
+exports.Controller = base_3.Controller;
+var itemView_1 = __webpack_require__(11);
+exports.ItemView = itemView_1.ItemView;
+var itemModel_1 = __webpack_require__(12);
+exports.ItemModel = itemModel_1.ItemModel;
+var itemController_1 = __webpack_require__(13);
+exports.ItemController = itemController_1.ItemController;
+var ConnectionView_1 = __webpack_require__(14);
+exports.ConnectionView = ConnectionView_1.ConnectionView;
+// export { Shop } from "./Model/Shop";
+// export { Basket } from "./Model/Basket";
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Shop_1 = __webpack_require__(0);
+var Basket = /** @class */function () {
+    function Basket() {
+        if (!localStorage.kart) {
+            this.products = [];
+            this.saveModifications();
+            console.log("hi");
+        } else {
+            this.products = JSON.parse(localStorage.getItem("kart")).produits;
+        }
+    }
+    Basket.prototype.addItem = function (id) {
+        this.products.push(id);
+        console.log("yeah");
+        this.products.sort();
+        this.saveModifications();
+    };
+    Basket.prototype.removeItem = function (id) {
+        var index = this.products.indexOf(id);
+        if (index != -1) this.products.splice(index);
+        this.saveModifications();
+    };
+    Basket.prototype.saveModifications = function () {
+        localStorage.setItem("kart", JSON.stringify({ produits: this.products }));
+    };
+    Basket.prototype.getItemFromId = function (id) {
+        var shop = new Shop_1.default();
+        return shop.products[String(id)];
+    };
+    Basket.prototype.clear = function () {
+        this.products = [];
+        this.saveModifications();
+    };
+    Basket.prototype.getItems = function () {
+        var _this = this;
+        var items = [];
+        this.products.forEach(function (element) {
+            items.push(_this.getItemFromId(element));
+        });
+        return items;
+    };
+    return Basket;
+}();
+exports.default = Basket;
+
+/***/ }),
+/* 5 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var $ = __webpack_require__(1);
+var Basket_1 = __webpack_require__(4);
+var ShopView = /** @class */function () {
+    function ShopView(products, pageOptions) {
+        this.products = products;
+        this.pageOptions = pageOptions;
+    }
+    ShopView.prototype.displayPage = function (page) {
+        var html = "";
+        for (var i = page * 10; i < page * 10 + 10 && i < this.products.length; i++) {
+            html += "<div class='float-left p-3 divProducts''>" + "<div class='card'>" + "<img src='" + this.products[i].image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='?page=detail&id=" + this.products[i].id + "'>" + this.products[i].nom + "</a></h3>" + "<p class='card-text'>Prix: " + this.products[i].prix + "$</p>" + "<input type='button' class='btn' value='" + this.products[i].id + "' />" + "</div>" + "</div>" + "</div>";
+        }
+        html += "<div class='w-100 text-right' id='divPagination'>" + "<ul class='pagination float-right'>" + "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
+        for (var y = 1; y < Math.ceil(this.products.length / 10) + 1; y++) {
+            var active = "";
+            if (page == y - 1) active = " active";
+            html += "<li class='page-item" + active + "'><a class='page-link page-number'>" + y + "</a></li>";
+        }
+        html += "<li class='page-item next'><a class='page-link'>Suivant</a></li>";
+        html += "</ul>" + "</div>";
+        $("#mainContent").html(html);
+        this.addPagination(page);
+        this.addOptions();
+    };
+    ShopView.prototype.addOptions = function () {
+        var options = this.pageOptions;
+        $("#mainContent .divProducts input").each(function () {
+            var id = Number(this.value);
+            if (options == "basket") {
+                $(this).addClass("btn-danger");
+                this.value = "Retirer du panier";
+                $(this).on("click", function () {
+                    new Basket_1.default().removeItem(id);
+                    $(this).parent().parent().parent().remove();
+                });
+            } else if (options == "index") {
+                $(this).addClass("btn-primary");
+                this.value = "Ajouter au panier";
+                $(this).on("click", function () {
+                    new Basket_1.default().addItem(id);
+                    alert("produit ajouté au pannier");
+                });
+            }
+        });
+    };
+    ShopView.prototype.addPagination = function (page) {
+        var shopView = this;
+        if (page != 0) {
+            $("#mainContent .prev").on("click", { view: shopView }, function (event) {
+                event.data.view.displayPage(page - 1);
+            });
+        } else {
+            $("#mainContent .prev").addClass("disabled");
+        }
+        if (page < Math.ceil(this.products.length / 10) - 1) {
+            $("#mainContent .next").on("click", { view: shopView }, function (event) {
+                event.data.view.displayPage(page + 1);
+            });
+        } else {
+            $("#mainContent .next").addClass("disabled");
+        }
+        $("#mainContent .page-number").each(function () {
+            var page = Number(this.innerText);
+            $(this).on("click", { view: shopView }, function (event) {
+                event.data.view.displayPage(page - 1);
+            });
+        });
+    };
+    return ShopView;
+}();
+exports.default = ShopView;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var connection_1 = __webpack_require__(7);
+var panier_1 = __webpack_require__(15);
+var edit_1 = __webpack_require__(16);
+var description_1 = __webpack_require__(17);
+var index_1 = __webpack_require__(18);
 function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
 }
-var item = getURLParameter("id");
+var item = Number(getURLParameter("id"));
 var page = getURLParameter("page");
 switch (page) {
     case "panier":
+        panier_1.default();
         break;
     case "connexion":
         connection_1.default();
         break;
     case "edit":
+        edit_1.default(item);
         break;
     case "detail":
-        var id = getURLParameter("id");
-        description_1.default(id);
+        description_1.default(item);
         break;
     default:
         index_1.default();
@@ -10492,7 +10707,43 @@ switch (page) {
 }
 
 /***/ }),
-/* 3 */
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Connection_1 = __webpack_require__(2);
+var export_1 = __webpack_require__(3);
+var $ = __webpack_require__(1);
+var Shop_1 = __webpack_require__(0);
+function connection() {
+    //No data needed here
+    var view = new export_1.ConnectionView();
+    var shop = new Shop_1.default();
+    //Different page if connected or not
+    if (Connection_1.isUserAdmin()) {
+        view.connected(shop.products);
+    } else {
+        view.connection();
+    }
+    $("#btnConnection").on("click", function () {
+        var nickname = $("#txtUsername").val().toString();
+        var password = $("#txtPassword").val().toString();
+        if (Connection_1.login(nickname, password) != false) {
+            //Reload Page
+            window.location.href = "?page=connexion";
+        } else {
+            //Error message
+            view.connectionError();
+        }
+    });
+}
+exports.default = connection;
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10517,7 +10768,7 @@ var View = /** @class */function () {
 exports.View = View;
 
 /***/ }),
-/* 4 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10542,7 +10793,7 @@ var Model = /** @class */function () {
 exports.Model = Model;
 
 /***/ }),
-/* 5 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10576,7 +10827,7 @@ var Controller = /** @class */function () {
 exports.Controller = Controller;
 
 /***/ }),
-/* 6 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10594,7 +10845,7 @@ var ItemView = /** @class */function () {
 exports.ItemView = ItemView;
 
 /***/ }),
-/* 7 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10620,7 +10871,7 @@ var ItemModel = /** @class */function () {
 exports.ItemModel = ItemModel;
 
 /***/ }),
-/* 8 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10636,164 +10887,6 @@ var ItemController = /** @class */function () {
 exports.ItemController = ItemController;
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var export_1 = __webpack_require__(0);
-var Shop = /** @class */function () {
-    function Shop() {
-        if (!localStorage.shop) this.createDatabase();else {
-            this.products = JSON.parse(localStorage.getItem("shop")).produits;
-        }
-    }
-    Shop.prototype.addItem = function (name, image, price, description) {
-        var id = Number(localStorage.lastId);
-        this.products[String(id)] = new export_1.ItemModel(id, "produit " + id, "http://lorempixel.com/200/200", price, description);
-        this.saveModifications();
-        id++;
-        localStorage.lastId = id;
-    };
-    Shop.prototype.removeItem = function (id) {
-        delete this.products[String(id)];
-        this.saveModifications();
-    };
-    Shop.prototype.modifyItem = function (id, name, image, price, description) {
-        var item = this.products[String(id)];
-        //item.modify(name,image,price,description);
-        item.nom = name;
-        item.description = description;
-        item.prix = price;
-        this.saveModifications();
-    };
-    Shop.prototype.saveModifications = function () {
-        localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
-    };
-    Shop.prototype.createDatabase = function () {
-        this.products = [];
-        for (var i = 0; i < 100; i++) this.products[String(i)] = new export_1.ItemModel(i, "produit " + (i + 1), "http://lorempixel.com/200/200", (i * 3 + 12 * 1 - 2) % 1026, "description du produit " + (i + 1));
-        localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
-        localStorage.setItem("lastId", "100");
-    };
-    return Shop;
-}();
-exports.default = Shop;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Shop_1 = __webpack_require__(9);
-var Basket = /** @class */function () {
-    function Basket() {
-        if (!localStorage.basket) {
-            this.products = [];
-            this.saveModifications();
-        } else {
-            this.products = JSON.parse(localStorage.getItem("kart")).produits;
-        }
-    }
-    Basket.prototype.addItem = function (id) {
-        this.products.push(id);
-        this.products.sort();
-        this.saveModifications();
-    };
-    Basket.prototype.removeItem = function (id) {
-        var index = this.products.indexOf(id);
-        if (index != -1) this.products.splice(index);
-        this.saveModifications();
-    };
-    Basket.prototype.saveModifications = function () {
-        localStorage.setItem("kart", JSON.stringify({ produits: this.products }));
-    };
-    Basket.prototype.getItemFromid = function (id) {
-        var shop = new Shop_1.default();
-        return shop.products[String(id)];
-    };
-    Basket.prototype.clear = function () {
-        this.products = [];
-        this.saveModifications();
-    };
-    return Basket;
-}();
-exports.Basket = Basket;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-function connection() {
-    //No data needed here
-    //Import vue
-    //add verification function to button validate
-    //  if (login(nickname, password))
-    //      Launch page index with flag connected
-    //  else
-    //      Launch page connection again
-}
-exports.default = connection;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Shop_1 = __webpack_require__(9);
-var ShopView_1 = __webpack_require__(13);
-var Connection_1 = __webpack_require__(15);
-function index() {
-    var shop = new Shop_1.default();
-    var shopView = new ShopView_1.default(shop.products, 10);
-    shopView.injectProducts(0, Connection_1.isUserAdmin(), false);
-}
-exports.default = index;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(1);
-var ShopView = /** @class */function () {
-    function ShopView(products, pagination) {
-        this.pagination = pagination; //Not usefull for the moment
-        this.products = products;
-    }
-    ShopView.prototype.injectProducts = function (page, isAdmin, isInbasket) {
-        var html = "";
-        for (var i = page * 10; i < page * 10 + 10; i++) {
-            html += "<div class='float-left p-3' id='divProduct'>" + "<div class='card'>" + "<img src='" + this.products[i].image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='#'>" + this.products[i].nom + "</a></h3>" + "<p class='card-text'>Prix: " + this.products[i].prix + "$</p>" + "<input type='button' class='btn btn-primary' value='Ajouter au panier' onclick='alert(" + this.products[i].id + ")'/>" + "</div>" + "</div>" + "</div>";
-        }
-        html += "<div class='w-100 text-right' id='divPagination'>" + "<ul class='pagination float-right'>" + "<li class='page-item'><a class='page-link' onclick='alert(" + (page - 1) + ")'>Précédent</a></li>";
-        for (var y = 1; y < Math.ceil(this.products.length / 10); y++) {
-            html += "<li class='page-item'><a class='page-link' onclick='alert(" + (y - 1) + ")'>" + y + "</a></li>";
-        }
-        html += "<li class='page-item'><a class='page-link' onclick='alert(" + (page + 1) + ")'>Suivant</a></li>" + "</ul>" + "</div>";
-        $("#mainContent").html(html);
-        //Add buttons for edit and for remove from basket
-    };
-    return ShopView;
-}();
-exports.default = ShopView;
-
-/***/ }),
 /* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10801,11 +10894,59 @@ exports.default = ShopView;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function description(id) {
-    //Fetch item from id
-    //Call view
-}
-exports.default = description;
+var $ = __webpack_require__(1);
+var Shop_1 = __webpack_require__(0);
+var Connection_1 = __webpack_require__(2);
+var ConnectionView = /** @class */function () {
+    function ConnectionView() {}
+    ConnectionView.prototype.connection = function () {
+        var html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>" + "<div class=\"form-group mx-auto border rounded w-25 p-3\">" + "<h3>Administration</h3>" + "<label for=\"txtUsername\">Utilisateur:</label><input type=\"text\" class=\"form-control\" id=\"txtUsername\" />" + "<label for=\"txtPassword\">Mot de passe: </label><input type=\"text\" class=\"form-control\" id=\"txtPassword\"/>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 connectionButton\" value=\"Connexion\" id='btnConnection'/></div>" + "</div>";
+        $("#mainContent").html(html);
+        $("#btnConnection").on("click", function () {
+            var nickname = String($("#txtUsername").val());
+            var password = String($("#txtPassword").val());
+            if (Connection_1.login(nickname, password)) location.reload();else alert("la combinaison n'est pas bonne (admin, admin");
+        });
+    };
+    ConnectionView.prototype.connected = function (products) {
+        var html = "<h2>Administration</h2>" + "<div class=\"border rounded-top\">" + "<table id=\"tableAdmin\" class=\"table table-sm text-left m-0\">" + "<thead class=\"thead-light\">" + "<tr>" + "<th class=\"p-2 border-0\">Image</th>" + "<th class=\"p-2 border-0\">Nom</th>" + "<th class=\"p-2 border-0\">Description</th>" + "<th class=\"p-2 border-0\">Prix</th>" + "<th class=\"border-0\"></th>" + "</tr>" + "</thead>" + "<tbody>";
+        for (var i = 0; i < products.length; i++) {
+            html += "<tr>" + "<td class=\"text-center\"><img src=\"" + products[i].image + "\"/></td>" + "<td class=\"text-left\">" + products[i].nom + "</td>" + "<td class=\"text-left\">" + products[i].description + "</td>" + "<td id=\"tdAdminPrix\">" + products[i].prix + " $</td>" + "<td class=\"text-center align-middle\">" + "<input type=\"button\" class=\"btn btn-primary edit\" value=\"" + products[i].id + "\"/>" + "<input type=\"button\" class=\"btn btn-danger delete\" value=\"" + products[i].id + "\"/>" + "</td>" + "</tr>";
+        }
+        html += "</tbody>\n" + "    </table>\n" + "</div>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 ajouter\" value=\"Ajouter un produit\"/>" + "<input type=\"button\" class=\"btn btn-primary mt-3 deconnexion\" value=\"Se déconnecter\"/>";
+        $("#mainContent").html(html);
+        $("#mainContent .delete").each(function (index) {
+            var id = Number(this.value);
+            this.value = "X";
+            $(this).on("click", function () {
+                if (confirm("voulez-vous vraiment supprimer ce produit?")) {
+                    new Shop_1.default().removeItem(id);
+                    $(this).parent().parent().remove();
+                }
+            });
+        });
+        $("#mainContent .edit").each(function (index) {
+            var id = this.value;
+            this.value = "Modifier";
+            $(this).on("click", function () {
+                document.location.href = "?page=edit&id=" + id;
+            });
+        });
+        $("#mainContent .ajouter").on("click", function () {
+            new Shop_1.default().addRandomItem();
+            location.reload();
+        });
+        $("#mainContent .deconnexion").on("click", function () {
+            Connection_1.deconnect();
+            location.reload();
+        });
+    };
+    ConnectionView.prototype.connectionError = function () {
+        $("#alertConnectionError").html("Nom d'utilisateur ou mot de passe invalid.").show();
+    };
+    return ConnectionView;
+}();
+exports.ConnectionView = ConnectionView;
 
 /***/ }),
 /* 15 */
@@ -10815,17 +10956,61 @@ exports.default = description;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function login(nickname, password) {
-    if (nickname == "admin" && password == "admin") {
-        localStorage.setItem("connected", "true");
-    } else return false;
+var Basket_1 = __webpack_require__(4);
+var ShopView_1 = __webpack_require__(5);
+function panier() {
+    var basket = new Basket_1.default();
+    var shopView = new ShopView_1.default(basket.getItems(), "basket");
+    shopView.displayPage(0);
 }
-exports.login = login;
-//These should be real functions with a node call to a database
-function isUserAdmin() {
-    return localStorage.getItem("connected") == "true";
+exports.default = panier;
+
+/***/ }),
+/* 16 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Shop_1 = __webpack_require__(0);
+function edit(id) {
+    var produit = new Shop_1.default().getItemFromId(id);
+    //New view made for editing
 }
-exports.isUserAdmin = isUserAdmin;
+exports.default = edit;
+
+/***/ }),
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Shop_1 = __webpack_require__(0);
+function edit(id) {
+    var produit = new Shop_1.default().getItemFromId(id);
+    //New view made for viewing
+}
+exports.default = edit;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Shop_1 = __webpack_require__(0);
+var ShopView_1 = __webpack_require__(5);
+function index() {
+    var shop = new Shop_1.default();
+    var shopView = new ShopView_1.default(shop.products, "index");
+    shopView.displayPage(0);
+}
+exports.default = index;
 
 /***/ })
 /******/ ]);

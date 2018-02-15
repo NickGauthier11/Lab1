@@ -17,7 +17,7 @@ export default class Shop {
         this.products[ String(id) ] =  new ItemModel(
             id,
             "produit " + id,
-            "http://lorempixel.com/200/200",
+            "Images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
             price,
             description
         );
@@ -29,7 +29,7 @@ export default class Shop {
     public addRandomItem(){
         this.addItem(
             "nouveau produit ",
-            "http://lorempixel.com/200/200",
+            "Images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
             10,
             "nouvel objet ajouté récement");
     }
@@ -59,7 +59,7 @@ export default class Shop {
             this.products[String(i)] = new ItemModel(
                 i,
                 "produit " + (i + 1),
-                "http://lorempixel.com/200/200",
+                "Images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
                 (i * 3 + 12 * 1 - 2) % 1026,
                 "description du produit " + (i + 1)
             );
