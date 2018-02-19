@@ -1,9 +1,9 @@
-import Shop from "../Model/Shop"
-import ShopView from "../View/ShopView"
-import {isUserAdmin} from "../Model/Connection"
+import {ShopView,Shop} from "../export";
 
-export default function index(p:number){
+export function index(p:number){
+    //Create or load all items in session
     let shop = new Shop();
+    //Display all items
     let shopView = new ShopView(shop.getProducts(),"index");
     shopView.displayPage(p);
 }

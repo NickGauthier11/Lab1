@@ -1,8 +1,9 @@
-import Basket from "../Model/Basket"
-import ShopView from "../View/ShopView"
+import {ShopView,Basket} from "../export";
 
-export default function panier(){
+export function panier(){
+    //Create or load the basket
     let basket:Basket = new Basket();
+    //Display all items of the basket
     let shopView:ShopView = new ShopView(basket.getItems(),"basket");
     shopView.displayPage(0);
 }

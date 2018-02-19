@@ -1,17 +1,19 @@
 import { ItemModel } from '../export';
 
-
-export default class Shop {
+export class Shop {
     products : ItemModel[];
 
     constructor(){
+        //If there is no shop on session create one
         if (!localStorage.shop)
             this.createDatabase();
         else{
+            //else load the products in session
             this.products = (JSON.parse(localStorage.getItem("shop"))).produits;
         }
     }
 
+    //Add an item then save in session
     public addItem (name:string, image:string, price:number, description:string) {
         let id = Number(localStorage.lastId);
         this.products[id] =  new ItemModel(
@@ -26,6 +28,7 @@ export default class Shop {
         localStorage.lastId = id;
     }
 
+    //Add an item with random infos
     public addRandomItem(){
         this.addItem(
             "nouveau produit ",
@@ -34,20 +37,22 @@ export default class Shop {
             "nouvel objet ajouté récement");
     }
 
+    //Remove an item then save in session
     public removeItem (id:number) {
         delete this.products[id];
         this.saveModifications();
     }
 
+    //Modify an item then save in session
     public modifyItem (id:number, name:string, image:string, price:number, description:string) {
         let item:ItemModel =  this.products[String(id)];
-        //item.modify(name,image,price,description);
         item.nom = name;
         item.description = description;
         item.prix = price;
         this.saveModifications();
     }
 
+    //Save all items in session
     private saveModifications () {
         localStorage.setItem("shop", JSON.stringify({ produits: this.products}));
     }
@@ -61,6 +66,7 @@ export default class Shop {
         return products;
     }
 
+    //Create a shop in session with random items
     private createDatabase(){
         this.products = [];
 
@@ -76,6 +82,7 @@ export default class Shop {
         localStorage.setItem("lastId", "100");
     }
 
+    //Find an item by ID
     public getItemFromId(id:number) : ItemModel{
         return this.products[id];
     }

@@ -1,9 +1,7 @@
-import {isUserAdmin, login} from "../Model/Connection";
-import { ConnectionView } from "../export";
+import { ConnectionView,Shop,isUserAdmin, login } from "../export";
 import * as $ from "jquery"
-import Shop from "../Model/Shop";
 
-export default function connection(){
+export function connection(){
     //No data needed here
     let view = new ConnectionView();
     let shop = new Shop();
