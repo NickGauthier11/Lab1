@@ -1,12 +1,11 @@
 import * as $ from "jquery";
-import Shop from "../Model/Shop"
-import {ItemModel} from "../Model/itemModel"
-import {login, deconnect} from "../Model/Connection"
+import {ItemModel,Shop} from "../export";
 
-export default class ItemEditView{
+export class ItemEditView{
     constructor(){
 
     }
+    //Display the edit view of an item
     showItem(product:ItemModel){
         let html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>"+
                     "<div class=\"form-group mx-auto border rounded w-25 p-3\">" +
@@ -20,13 +19,16 @@ export default class ItemEditView{
                     "</div>";
         $("#mainContent").html(html);
 
+        //Add click event to confirm button
         $("#btnValidation").on("click", function(){
             let nom:string = String($("#nom").val());
             let image:string = String($("#image").val());
             let prix:number = Number($("#prix").val());
             let description:string = String($("#description").val());
 
+            //Update item in shop
             new Shop().modifyItem(product.id,nom,image,prix,description);
+            //Reload page
             document.location.href = "?page=connexion";
         });
     }

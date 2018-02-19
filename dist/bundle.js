@@ -71,13 +71,16 @@
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var export_1 = __webpack_require__(3);
+var export_1 = __webpack_require__(4);
 var Shop = /** @class */function () {
     function Shop() {
+        //If there is no shop on session create one
         if (!localStorage.shop) this.createDatabase();else {
+            //else load the products in session
             this.products = JSON.parse(localStorage.getItem("shop")).produits;
         }
     }
+    //Add an item then save in session
     Shop.prototype.addItem = function (name, image, price, description) {
         var id = Number(localStorage.lastId);
         this.products[id] = new export_1.ItemModel(id, "produit " + id, "images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", price, description);
@@ -85,21 +88,24 @@ var Shop = /** @class */function () {
         id++;
         localStorage.lastId = id;
     };
+    //Add an item with random infos
     Shop.prototype.addRandomItem = function () {
         this.addItem("nouveau produit ", "images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", 10, "nouvel objet ajouté récement");
     };
+    //Remove an item then save in session
     Shop.prototype.removeItem = function (id) {
         delete this.products[id];
         this.saveModifications();
     };
+    //Modify an item then save in session
     Shop.prototype.modifyItem = function (id, name, image, price, description) {
         var item = this.products[String(id)];
-        //item.modify(name,image,price,description);
         item.nom = name;
         item.description = description;
         item.prix = price;
         this.saveModifications();
     };
+    //Save all items in session
     Shop.prototype.saveModifications = function () {
         localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
     };
@@ -110,18 +116,20 @@ var Shop = /** @class */function () {
         });
         return products;
     };
+    //Create a shop in session with random items
     Shop.prototype.createDatabase = function () {
         this.products = [];
         for (var i = 0; i < 100; i++) this.products[i] = new export_1.ItemModel(i, "produit " + (i + 1), "images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", (i * 3 + 12 * 1 - 2) % 1026, "description du produit " + (i + 1));
         localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
         localStorage.setItem("lastId", "100");
     };
+    //Find an item by ID
     Shop.prototype.getItemFromId = function (id) {
         return this.products[id];
     };
     return Shop;
 }();
-exports.default = Shop;
+exports.Shop = Shop;
 
 /***/ }),
 /* 1 */
@@ -10502,88 +10510,45 @@ return jQuery;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-function login(nickname, password) {
-    if (nickname == "admin" && password == "admin") {
-        localStorage.setItem("connected", "true");
-        return true;
-    } else return false;
-}
-exports.login = login;
-//These should be real functions with a node call to a database
-function isUserAdmin() {
-    return localStorage.getItem("connected") == "true";
-}
-exports.isUserAdmin = isUserAdmin;
-function deconnect() {
-    localStorage.removeItem("connected");
-}
-exports.deconnect = deconnect;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var base_1 = __webpack_require__(8);
-exports.View = base_1.View;
-var base_2 = __webpack_require__(9);
-exports.Model = base_2.Model;
-var base_3 = __webpack_require__(10);
-exports.Controller = base_3.Controller;
-// export { ItemView } from "./View/itemView";
-var itemModel_1 = __webpack_require__(11);
-exports.ItemModel = itemModel_1.ItemModel;
-var itemController_1 = __webpack_require__(12);
-exports.ItemController = itemController_1.ItemController;
-var ConnectionView_1 = __webpack_require__(13);
-exports.ConnectionView = ConnectionView_1.ConnectionView;
-// export { Shop } from "./Model/Shop";
-// export { Basket } from "./Model/Basket";
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Shop_1 = __webpack_require__(0);
+var export_1 = __webpack_require__(4);
 var Basket = /** @class */function () {
     function Basket() {
+        //If there is no kart session create one
         if (!localStorage.kart) {
             this.products = [];
             this.saveModifications();
-            console.log("hi");
         } else {
+            //else get the products in session
             this.products = JSON.parse(localStorage.getItem("kart")).produits;
         }
     }
+    //Add a product then save in session
     Basket.prototype.addItem = function (id) {
         this.products.push(id);
-        console.log("yeah");
         this.products.sort();
         this.saveModifications();
     };
+    //Remove a product then save in session
     Basket.prototype.removeItem = function (id) {
         var index = this.products.indexOf(id);
         if (index != -1) this.products.splice(index);
         this.saveModifications();
     };
+    //Save all the products in the session
     Basket.prototype.saveModifications = function () {
         localStorage.setItem("kart", JSON.stringify({ produits: this.products }));
     };
+    //Get a product from the shop with ID
     Basket.prototype.getItemFromId = function (id) {
-        var shop = new Shop_1.default();
+        var shop = new export_1.Shop();
         return shop.products[String(id)];
     };
+    //Empty the basket then save in session
     Basket.prototype.clear = function () {
         this.products = [];
         this.saveModifications();
     };
+    //Get all the items in the basket and convert them in itemModel
     Basket.prototype.getItems = function () {
         var _this = this;
         var items = [];
@@ -10594,7 +10559,73 @@ var Basket = /** @class */function () {
     };
     return Basket;
 }();
-exports.default = Basket;
+exports.Basket = Basket;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+function login(nickname, password) {
+    //Validate if correct user and password
+    if (nickname == "admin" && password == "admin") {
+        //Set the session to true
+        localStorage.setItem("connected", "true");
+        return true;
+    } else return false;
+}
+exports.login = login;
+//These should be real functions with a node call to a database
+function isUserAdmin() {
+    //Check if the user is connected
+    return localStorage.getItem("connected") == "true";
+}
+exports.isUserAdmin = isUserAdmin;
+function deconnect() {
+    //Disconnect the user by removing the session
+    localStorage.removeItem("connected");
+}
+exports.deconnect = deconnect;
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var connection_1 = __webpack_require__(7);
+exports.connection = connection_1.connection;
+var description_1 = __webpack_require__(14);
+exports.detail = description_1.detail;
+var edit_1 = __webpack_require__(12);
+exports.edit = edit_1.edit;
+var index_1 = __webpack_require__(16);
+exports.index = index_1.index;
+var panier_1 = __webpack_require__(11);
+exports.panier = panier_1.panier;
+var Basket_1 = __webpack_require__(2);
+exports.Basket = Basket_1.Basket;
+var Connection_1 = __webpack_require__(3);
+exports.login = Connection_1.login;
+exports.isUserAdmin = Connection_1.isUserAdmin;
+exports.deconnect = Connection_1.deconnect;
+var itemModel_1 = __webpack_require__(8);
+exports.ItemModel = itemModel_1.ItemModel;
+var Shop_1 = __webpack_require__(0);
+exports.Shop = Shop_1.Shop;
+var ConnectionView_1 = __webpack_require__(10);
+exports.ConnectionView = ConnectionView_1.ConnectionView;
+var ItemEditView_1 = __webpack_require__(13);
+exports.ItemEditView = ItemEditView_1.ItemEditView;
+var ItemView_1 = __webpack_require__(15);
+exports.ItemView = ItemView_1.ItemView;
+var ShopView_1 = __webpack_require__(5);
+exports.ShopView = ShopView_1.ShopView;
 
 /***/ }),
 /* 5 */
@@ -10605,17 +10636,19 @@ exports.default = Basket;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var $ = __webpack_require__(1);
-var Basket_1 = __webpack_require__(4);
+var export_1 = __webpack_require__(4);
 var ShopView = /** @class */function () {
     function ShopView(products, pageOptions) {
         this.products = products;
         this.pageOptions = pageOptions;
     }
+    //Display all items of the shop
     ShopView.prototype.displayPage = function (page) {
         var html = "";
         for (var i = page * 10; i < page * 10 + 10 && i < this.products.length; i++) {
             html += "<div class='float-left p-3 divProducts' id='divProduct'>" + "<div class='card'>" + "<img src='" + this.products[i].image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='?page=detail&id=" + this.products[i].id + "'>" + this.products[i].nom + "</a></h3>" + "<p class='card-text'>Prix: " + this.products[i].prix + "$</p>" + "<input type='button' class='btn' value='" + this.products[i].id + "' />" + "</div>" + "</div>" + "</div>";
         }
+        //Create pagination buttons
         html += "<div class='w-100 text-right' id='divPagination'>" + "<ul class='pagination float-right'>" + "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
         for (var y = 1; y < Math.ceil(this.products.length / 10) + 1; y++) {
             var active = "";
@@ -10628,29 +10661,33 @@ var ShopView = /** @class */function () {
         this.addPagination(page);
         this.addOptions();
     };
+    //Add events to all the buttons
     ShopView.prototype.addOptions = function () {
         var options = this.pageOptions;
         $("#mainContent .divProducts input").each(function () {
             var id = Number(this.value);
+            //If basket view
             if (options == "basket") {
                 $(this).addClass("btn-danger");
                 this.value = "Retirer du panier";
                 $(this).on("click", function () {
-                    new Basket_1.default().removeItem(id);
+                    //Remove item from basket
+                    new export_1.Basket().removeItem(id);
                     $(this).parent().parent().parent().remove();
                 });
             } else if (options == "index") {
                 $(this).addClass("btn-primary");
                 this.value = "Ajouter au panier";
                 $(this).on("click", function () {
-                    new Basket_1.default().addItem(id);
-                    alert("produit ajouté au pannier");
+                    //Add item to basket
+                    new export_1.Basket().addItem(id);
+                    alert("Produit ajouté au panier.");
                 });
             }
         });
     };
+    //Add all the events to the pagination
     ShopView.prototype.addPagination = function (page) {
-        var shopView = this;
         if (page != 0) {
             $("#mainContent .prev").on("click", function () {
                 document.location.href = "?p=" + (page - 1);
@@ -10674,7 +10711,7 @@ var ShopView = /** @class */function () {
     };
     return ShopView;
 }();
-exports.default = ShopView;
+exports.ShopView = ShopView;
 
 /***/ }),
 /* 6 */
@@ -10684,35 +10721,33 @@ exports.default = ShopView;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var connection_1 = __webpack_require__(7);
-var panier_1 = __webpack_require__(14);
-var edit_1 = __webpack_require__(15);
-var description_1 = __webpack_require__(16);
-var index_1 = __webpack_require__(17);
+var export_1 = __webpack_require__(4);
 function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
 }
+//Get params from URL
 var item = Number(getURLParameter("id"));
 var page = getURLParameter("page");
 var p;
 if (getURLParameter("p") == "") {
     p = 0;
 } else p = Number(getURLParameter("p"));
+//Call controllers
 switch (page) {
     case "panier":
-        panier_1.default();
+        export_1.panier();
         break;
     case "connexion":
-        connection_1.default();
+        export_1.connection();
         break;
     case "edit":
-        edit_1.default(item);
+        export_1.edit(item);
         break;
     case "detail":
-        description_1.default(item);
+        export_1.detail(item);
         break;
     default:
-        index_1.default(p);
+        export_1.index(p);
         break;
 }
 
@@ -10724,16 +10759,14 @@ switch (page) {
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Connection_1 = __webpack_require__(2);
-var export_1 = __webpack_require__(3);
+var export_1 = __webpack_require__(4);
 var $ = __webpack_require__(1);
-var Shop_1 = __webpack_require__(0);
 function connection() {
     //No data needed here
     var view = new export_1.ConnectionView();
-    var shop = new Shop_1.default();
+    var shop = new export_1.Shop();
     //Different page if connected or not
-    if (Connection_1.isUserAdmin()) {
+    if (export_1.isUserAdmin()) {
         view.connected(shop.getProducts());
     } else {
         view.connection();
@@ -10741,7 +10774,7 @@ function connection() {
     $("#btnConnection").on("click", function () {
         var nickname = $("#txtUsername").val().toString();
         var password = $("#txtPassword").val().toString();
-        if (Connection_1.login(nickname, password) != false) {
+        if (export_1.login(nickname, password) != false) {
             //Reload Page
             window.location.href = "?page=connexion";
         } else {
@@ -10750,7 +10783,7 @@ function connection() {
         }
     });
 }
-exports.default = connection;
+exports.connection = connection;
 
 /***/ }),
 /* 8 */
@@ -10760,49 +10793,21 @@ exports.default = connection;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(1);
-var View = /** @class */function () {
-    function View(_controller) {
-        this.controller = _controller;
-        var self = this.controller;
-        $("#heading").html(this.controller.getModelHeading()).on("click", function (e) {
-            self.handleEvent(e);
-        });
-        this.controller.model.registerObserver(this);
+//Create a model of an item with all the infos needed
+var ItemModel = /** @class */function () {
+    function ItemModel(id, nom, image, prix, description) {
+        this.id = id;
+        this.nom = nom;
+        this.image = image;
+        this.prix = prix;
+        this.description = description;
     }
-    View.prototype.update = function () {
-        $("#heading").html(this.controller.getModelHeading());
-    };
-    return View;
+    return ItemModel;
 }();
-exports.View = View;
+exports.ItemModel = ItemModel;
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Model = /** @class */function () {
-    function Model() {
-        this.observers = [];
-        this.heading = "Hello";
-    }
-    Model.prototype.registerObserver = function (observer) {
-        this.observers.push(observer);
-    };
-    Model.prototype.notifyAll = function () {
-        this.observers.forEach(function (observer) {
-            observer.update();
-        });
-    };
-    return Model;
-}();
-exports.Model = Model;
-
-/***/ }),
+/* 9 */,
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10810,31 +10815,64 @@ exports.Model = Model;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Controller = /** @class */function () {
-    function Controller(_model) {
-        this.model = _model;
-    }
-    Controller.prototype.handleEvent = function (e) {
-        e.stopPropagation();
-        switch (e.type) {
-            case "click":
-                //alert(e.target);
-                this.clickHandler();
-                break;
-            default:
-                console.log(e.target);
+var $ = __webpack_require__(1);
+var export_1 = __webpack_require__(4);
+var ConnectionView = /** @class */function () {
+    function ConnectionView() {}
+    //Show the connection view
+    ConnectionView.prototype.connection = function () {
+        var html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>" + "<div class=\"form-group mx-auto border rounded w-25 p-3\">" + "<h3>Administration</h3>" + "<label for=\"txtUsername\">Utilisateur:</label><input type=\"text\" class=\"form-control\" id=\"txtUsername\" />" + "<label for=\"txtPassword\">Mot de passe: </label><input type=\"text\" class=\"form-control\" id=\"txtPassword\"/>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 connectionButton\" value=\"Connexion\" id='btnConnection'/></div>" + "</div>";
+        $("#mainContent").html(html);
+    };
+    //Once connected show all items in shop to modification
+    ConnectionView.prototype.connected = function (products) {
+        var html = "<h2>Administration</h2>" + "<div class=\"border rounded-top\">" + "<table id=\"tableAdmin\" class=\"table table-sm text-left m-0\">" + "<thead class=\"thead-light\">" + "<tr>" + "<th class=\"p-2 border-0\">Image</th>" + "<th class=\"p-2 border-0\">Nom</th>" + "<th class=\"p-2 border-0\">Description</th>" + "<th class=\"p-2 border-0\">Prix</th>" + "<th class=\"border-0\"></th>" + "</tr>" + "</thead>" + "<tbody>";
+        for (var i = 0; i < products.length; i++) {
+            html += "<tr>" + "<td class=\"text-center\"><img src=\"" + products[i].image + "\"/></td>" + "<td class=\"text-left\">" + products[i].nom + "</td>" + "<td class=\"text-left\">" + products[i].description + "</td>" + "<td id=\"tdAdminPrix\">" + products[i].prix + " $</td>" + "<td class=\"text-center align-middle\">" + "<input type=\"button\" class=\"btn btn-primary edit\" value=\"" + products[i].id + "\"/>" + "<input type=\"button\" class=\"btn btn-danger delete\" value=\"" + products[i].id + "\"/>" + "</td>" + "</tr>";
         }
+        html += "</tbody>\n" + "    </table>\n" + "</div>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 ajouter\" value=\"Ajouter un produit\"/>" + "<input type=\"button\" class=\"btn btn-primary mt-3 deconnexion\" value=\"Se déconnecter\"/>";
+        $("#mainContent").html(html);
+        //Add a click event to all the delete buttons
+        $("#mainContent .delete").each(function (index) {
+            var id = Number(this.value);
+            this.value = "X";
+            $(this).on("click", function () {
+                if (confirm("Voulez-vous vraiment supprimer ce produit?")) {
+                    //Remove item from shop
+                    new export_1.Shop().removeItem(id);
+                    $(this).parent().parent().remove();
+                }
+            });
+        });
+        //Add a click event to all the edit buttons
+        $("#mainContent .edit").each(function (index) {
+            var id = this.value;
+            this.value = "Modifier";
+            $(this).on("click", function () {
+                //Redirect to edit page
+                document.location.href = "?page=edit&id=" + id;
+            });
+        });
+        //Add click event to add button
+        $("#mainContent .ajouter").on("click", function () {
+            //Add a random item in shop
+            new export_1.Shop().addRandomItem();
+            location.reload();
+        });
+        //Add click event to disconnect button
+        $("#mainContent .deconnexion").on("click", function () {
+            //Disconnect user
+            export_1.deconnect();
+            location.reload();
+        });
     };
-    Controller.prototype.getModelHeading = function () {
-        return this.model.heading;
+    //Show an error message
+    ConnectionView.prototype.connectionError = function () {
+        $("#alertConnectionError").html("Nom d'utilisateur ou mot de passe invalid.(admin,admin)").show();
     };
-    Controller.prototype.clickHandler = function () {
-        this.model.heading = "World";
-        this.model.notifyAll();
-    };
-    return Controller;
+    return ConnectionView;
 }();
-exports.Controller = Controller;
+exports.ConnectionView = ConnectionView;
 
 /***/ }),
 /* 11 */
@@ -10844,23 +10882,15 @@ exports.Controller = Controller;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ItemModel = /** @class */function () {
-    function ItemModel(id, nom, image, prix, description) {
-        this.id = id;
-        this.nom = nom;
-        this.image = image;
-        this.prix = prix;
-        this.description = description;
-    }
-    ItemModel.prototype.modify = function (nom, image, prix, description) {
-        this.nom = nom;
-        this.image = image;
-        this.prix = prix;
-        this.description = description;
-    };
-    return ItemModel;
-}();
-exports.ItemModel = ItemModel;
+var export_1 = __webpack_require__(4);
+function panier() {
+    //Create or load the basket
+    var basket = new export_1.Basket();
+    //Display all items of the basket
+    var shopView = new export_1.ShopView(basket.getItems(), "basket");
+    shopView.displayPage(0);
+}
+exports.panier = panier;
 
 /***/ }),
 /* 12 */
@@ -10870,13 +10900,14 @@ exports.ItemModel = ItemModel;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var ItemController = /** @class */function () {
-    function ItemController(itemModel) {
-        this.itemModel = itemModel;
-    }
-    return ItemController;
-}();
-exports.ItemController = ItemController;
+var export_1 = __webpack_require__(4);
+function edit(id) {
+    //Find item with ID
+    var produit = new export_1.Shop().getItemFromId(id);
+    //Display the edit view
+    new export_1.ItemEditView().showItem(produit);
+}
+exports.edit = edit;
 
 /***/ }),
 /* 13 */
@@ -10887,58 +10918,28 @@ exports.ItemController = ItemController;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var $ = __webpack_require__(1);
-var Shop_1 = __webpack_require__(0);
-var Connection_1 = __webpack_require__(2);
-var ConnectionView = /** @class */function () {
-    function ConnectionView() {}
-    ConnectionView.prototype.connection = function () {
-        var html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>" + "<div class=\"form-group mx-auto border rounded w-25 p-3\">" + "<h3>Administration</h3>" + "<label for=\"txtUsername\">Utilisateur:</label><input type=\"text\" class=\"form-control\" id=\"txtUsername\" />" + "<label for=\"txtPassword\">Mot de passe: </label><input type=\"text\" class=\"form-control\" id=\"txtPassword\"/>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 connectionButton\" value=\"Connexion\" id='btnConnection'/></div>" + "</div>";
+var export_1 = __webpack_require__(4);
+var ItemEditView = /** @class */function () {
+    function ItemEditView() {}
+    //Display the edit view of an item
+    ItemEditView.prototype.showItem = function (product) {
+        var html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>" + "<div class=\"form-group mx-auto border rounded w-25 p-3\">" + "<h3>Modification de : " + product.nom + "</h3>" + "<label for=\"nom\">Nom:</label><input type=\"text\" class=\"form-control\" id=\"nom\" value=\"" + product.nom + "\" />" + "<label for=\"image\">Image: </label><input type=\"text\" class=\"form-control\" id=\"image\" value=\"" + product.image + "\"/> " + "<label for=\"prix\">Prix:</label><input type=\"number\" class=\"form-control\" id=\"prix\" value=\"" + product.prix + "\"/>" + "<label for=\"description\">Description:</label><input type=\"text\" class=\"form-control\" id=\"description\" value=\"" + product.description + "\"/>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 connectionButton\" value=\"Modifier\" id='btnValidation'/></div>" + "</div>";
         $("#mainContent").html(html);
-        $("#btnConnection").on("click", function () {
-            var nickname = String($("#txtUsername").val());
-            var password = String($("#txtPassword").val());
-            if (Connection_1.login(nickname, password)) location.reload();else alert("la combinaison n'est pas bonne (admin, admin");
+        //Add click event to confirm button
+        $("#btnValidation").on("click", function () {
+            var nom = String($("#nom").val());
+            var image = String($("#image").val());
+            var prix = Number($("#prix").val());
+            var description = String($("#description").val());
+            //Update item in shop
+            new export_1.Shop().modifyItem(product.id, nom, image, prix, description);
+            //Reload page
+            document.location.href = "?page=connexion";
         });
     };
-    ConnectionView.prototype.connected = function (products) {
-        var html = "<h2>Administration</h2>" + "<div class=\"border rounded-top\">" + "<table id=\"tableAdmin\" class=\"table table-sm text-left m-0\">" + "<thead class=\"thead-light\">" + "<tr>" + "<th class=\"p-2 border-0\">Image</th>" + "<th class=\"p-2 border-0\">Nom</th>" + "<th class=\"p-2 border-0\">Description</th>" + "<th class=\"p-2 border-0\">Prix</th>" + "<th class=\"border-0\"></th>" + "</tr>" + "</thead>" + "<tbody>";
-        for (var i = 0; i < products.length; i++) {
-            html += "<tr>" + "<td class=\"text-center\"><img src=\"" + products[i].image + "\"/></td>" + "<td class=\"text-left\">" + products[i].nom + "</td>" + "<td class=\"text-left\">" + products[i].description + "</td>" + "<td id=\"tdAdminPrix\">" + products[i].prix + " $</td>" + "<td class=\"text-center align-middle\">" + "<input type=\"button\" class=\"btn btn-primary edit\" value=\"" + products[i].id + "\"/>" + "<input type=\"button\" class=\"btn btn-danger delete\" value=\"" + products[i].id + "\"/>" + "</td>" + "</tr>";
-        }
-        html += "</tbody>\n" + "    </table>\n" + "</div>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 ajouter\" value=\"Ajouter un produit\"/>" + "<input type=\"button\" class=\"btn btn-primary mt-3 deconnexion\" value=\"Se déconnecter\"/>";
-        $("#mainContent").html(html);
-        $("#mainContent .delete").each(function (index) {
-            var id = Number(this.value);
-            this.value = "X";
-            $(this).on("click", function () {
-                if (confirm("voulez-vous vraiment supprimer ce produit?")) {
-                    new Shop_1.default().removeItem(id);
-                    $(this).parent().parent().remove();
-                }
-            });
-        });
-        $("#mainContent .edit").each(function (index) {
-            var id = this.value;
-            this.value = "Modifier";
-            $(this).on("click", function () {
-                document.location.href = "?page=edit&id=" + id;
-            });
-        });
-        $("#mainContent .ajouter").on("click", function () {
-            new Shop_1.default().addRandomItem();
-            location.reload();
-        });
-        $("#mainContent .deconnexion").on("click", function () {
-            Connection_1.deconnect();
-            location.reload();
-        });
-    };
-    ConnectionView.prototype.connectionError = function () {
-        $("#alertConnectionError").html("Nom d'utilisateur ou mot de passe invalid.").show();
-    };
-    return ConnectionView;
+    return ItemEditView;
 }();
-exports.ConnectionView = ConnectionView;
+exports.ItemEditView = ItemEditView;
 
 /***/ }),
 /* 14 */
@@ -10948,14 +10949,14 @@ exports.ConnectionView = ConnectionView;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Basket_1 = __webpack_require__(4);
-var ShopView_1 = __webpack_require__(5);
-function panier() {
-    var basket = new Basket_1.default();
-    var shopView = new ShopView_1.default(basket.getItems(), "basket");
-    shopView.displayPage(0);
+var export_1 = __webpack_require__(4);
+function detail(id) {
+    //Find item with ID
+    var produit = new export_1.Shop().getItemFromId(id);
+    //Display item
+    new export_1.ItemView().displayItem(produit);
 }
-exports.default = panier;
+exports.detail = detail;
 
 /***/ }),
 /* 15 */
@@ -10965,13 +10966,31 @@ exports.default = panier;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Shop_1 = __webpack_require__(0);
-var ItemEditView_1 = __webpack_require__(19);
-function edit(id) {
-    var produit = new Shop_1.default().getItemFromId(id);
-    new ItemEditView_1.default().showItem(produit);
-}
-exports.default = edit;
+var $ = __webpack_require__(1);
+var export_1 = __webpack_require__(4);
+var ItemView = /** @class */function () {
+    function ItemView() {}
+    //Display the view of an item
+    ItemView.prototype.displayItem = function (product) {
+        var html = "";
+        html += "<h2>Description</h2>" + "<div class=\"media my-3 border rounded\" id='divDescProduit'>" + "<img class=\"img-fluid rounded\" src=\"" + product.image + "\"/>" + "<div class=\"media-body mx-3\">" + "<h1>" + product.nom + "</h1>" + "<div><b>Prix:</b> " + product.prix + "$</div>" + "<p>" + product.description + "</p>" + "<div><input type=\"button\" class=\"btn btn-primary\" value='Ajouter au panier'/></div>" + "</div>" + "</div>";
+        $("#mainContent").html(html);
+        this.addOptions();
+    };
+    ItemView.prototype.addOptions = function () {
+        $("#mainContent .divProduct input").each(function () {
+            var id = Number(this.value);
+            //Add click event to add basket button
+            $(this).on("click", function () {
+                //Add item to basket
+                new export_1.Basket().addItem(id);
+                alert("Produit ajouté au panier.");
+            });
+        });
+    };
+    return ItemView;
+}();
+exports.ItemView = ItemView;
 
 /***/ }),
 /* 16 */
@@ -10981,92 +11000,15 @@ exports.default = edit;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var Shop_1 = __webpack_require__(0);
-var ItemView_1 = __webpack_require__(18);
-function edit(id) {
-    var produit = new Shop_1.default().getItemFromId(id);
-    new ItemView_1.default().displayItem(produit);
-}
-exports.default = edit;
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var Shop_1 = __webpack_require__(0);
-var ShopView_1 = __webpack_require__(5);
+var export_1 = __webpack_require__(4);
 function index(p) {
-    var shop = new Shop_1.default();
-    var shopView = new ShopView_1.default(shop.getProducts(), "index");
+    //Create or load all items in session
+    var shop = new export_1.Shop();
+    //Display all items
+    var shopView = new export_1.ShopView(shop.getProducts(), "index");
     shopView.displayPage(p);
 }
-exports.default = index;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(1);
-var Basket_1 = __webpack_require__(4);
-var ItemView = /** @class */function () {
-    function ItemView() {}
-    ItemView.prototype.displayItem = function (product) {
-        var html = "";
-        html += "<div class='divProduct' id='divProduct'>" + "<div class='card'>" + "<img src='" + product.image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='?page=detail&id=" + product.id + "'>" + product.nom + "</a></h3>" + "<p class='card-text'>" + product.description + "</p>" + "<p class='card-text'>Prix: " + product.prix + "$</p>" + "<input type='button' class='btn' value='" + product.id + "' />" + "</div>" + "</div>" + "</div>";
-        $("#mainContent").html(html);
-        this.addOptions();
-    };
-    ItemView.prototype.addOptions = function () {
-        var options = this.pageOptions;
-        $("#mainContent .divProduct input").each(function () {
-            var id = Number(this.value);
-            $(this).addClass("btn-primary");
-            this.value = "Ajouter au panier";
-            $(this).on("click", function () {
-                new Basket_1.default().addItem(id);
-                alert("produit ajouté au pannier");
-            });
-        });
-    };
-    return ItemView;
-}();
-exports.default = ItemView;
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(1);
-var Shop_1 = __webpack_require__(0);
-var ItemEditView = /** @class */function () {
-    function ItemEditView() {}
-    ItemEditView.prototype.showItem = function (product) {
-        var html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>" + "<div class=\"form-group mx-auto border rounded w-25 p-3\">" + "<h3>Modification de : " + product.nom + "</h3>" + "<label for=\"nom\">Nom:</label><input type=\"text\" class=\"form-control\" id=\"nom\" value=\"" + product.nom + "\" />" + "<label for=\"image\">Image: </label><input type=\"text\" class=\"form-control\" id=\"image\" value=\"" + product.image + "\"/> " + "<label for=\"prix\">Prix:</label><input type=\"number\" class=\"form-control\" id=\"prix\" value=\"" + product.prix + "\"/>" + "<label for=\"description\">Description:</label><input type=\"text\" class=\"form-control\" id=\"description\" value=\"" + product.description + "\"/>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 connectionButton\" value=\"Modifier\" id='btnValidation'/></div>" + "</div>";
-        $("#mainContent").html(html);
-        $("#btnValidation").on("click", function () {
-            var nom = String($("#nom").val());
-            var image = String($("#image").val());
-            var prix = Number($("#prix").val());
-            var description = String($("#description").val());
-            new Shop_1.default().modifyItem(product.id, nom, image, prix, description);
-            document.location.href = "?page=connexion";
-        });
-    };
-    return ItemEditView;
-}();
-exports.default = ItemEditView;
+exports.index = index;
 
 /***/ })
 /******/ ]);

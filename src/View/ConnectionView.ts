@@ -1,13 +1,12 @@
 import * as $ from "jquery";
-import Shop from "../Model/Shop"
-import {ItemModel} from "../Model/itemModel"
-import {login, deconnect} from "../Model/Connection"
+import {ItemModel,Shop,login, deconnect} from "../export";
 
 export class ConnectionView{
     constructor(){
 
     }
-    connection(){
+    //Show the connection view
+    public connection(){
         let html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>"+
                     "<div class=\"form-group mx-auto border rounded w-25 p-3\">" +
                         "<h3>Administration</h3>" +
@@ -16,19 +15,9 @@ export class ConnectionView{
                         "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 connectionButton\" value=\"Connexion\" id='btnConnection'/></div>" +
                     "</div>";
         $("#mainContent").html(html);
-
-        $("#btnConnection").on("click", function(){
-            let nickname:string = String($("#txtUsername").val());
-            let password:string = String($("#txtPassword").val());
-            if ( login(nickname,password) )
-                location.reload();
-            else
-                alert("la combinaison n'est pas bonne (admin, admin");
-        })
-
     }
-    connected(products:ItemModel[]){
-        
+    //Once connected show all items in shop to modification
+    public connected(products:ItemModel[]){
         let html = "<h2>Administration</h2>" +
                     "<div class=\"border rounded-top\">" +
                         "<table id=\"tableAdmin\" class=\"table table-sm text-left m-0\">" +
@@ -63,38 +52,47 @@ export class ConnectionView{
 
         $("#mainContent").html(html);
 
+        //Add a click event to all the delete buttons
         $("#mainContent .delete").each (function (index){
             let id:number = Number((<HTMLInputElement>this).value);
             (<HTMLInputElement>this).value = "X";
             $(this).on("click", function(){
-                if (confirm("voulez-vous vraiment supprimer ce produit?")){
+                if (confirm("Voulez-vous vraiment supprimer ce produit?")){
+                    //Remove item from shop
                     new Shop().removeItem(id);
                     $(this).parent().parent().remove();
                 }
             })
         });
 
+        //Add a click event to all the edit buttons
         $("#mainContent .edit").each (function (index){
             let id:string = (<HTMLInputElement>this).value;
             (<HTMLInputElement>this).value = "Modifier";
             $(this).on("click", function(){
+                //Redirect to edit page
                 document.location.href = "?page=edit&id=" + id;
             })
         });
-        
+
+        //Add click event to add button
         $("#mainContent .ajouter").on("click", function(){
+            //Add a random item in shop
             new Shop().addRandomItem();
             location.reload();
         });
 
+        //Add click event to disconnect button
         $("#mainContent .deconnexion").on("click", function(){
+            //Disconnect user
             deconnect();
             location.reload();
         });
 
 
     }
-    connectionError(){
-        $("#alertConnectionError").html("Nom d'utilisateur ou mot de passe invalid.").show();
+    //Show an error message
+    public connectionError(){
+        $("#alertConnectionError").html("Nom d'utilisateur ou mot de passe invalid.(admin,admin)").show();
     }
 }

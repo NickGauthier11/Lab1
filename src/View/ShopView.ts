@@ -1,8 +1,7 @@
 import * as $ from "jquery";
-import { ItemModel } from "../Model/itemModel";
-import Basket from "../Model/Basket"
+import { ItemModel,Basket } from "../export";
 
-export default class ShopView{
+export class ShopView{
     products: ItemModel[];
     pageOptions:String;
     constructor(products: ItemModel[], pageOptions:string){
@@ -11,6 +10,7 @@ export default class ShopView{
 
     }
 
+    //Display all items of the shop
     public displayPage (page:number){
         let html = "";
         
@@ -27,7 +27,7 @@ export default class ShopView{
                     "</div>";
         }
         
-        
+        //Create pagination buttons
         html += "<div class='w-100 text-right' id='divPagination'>" +
                     "<ul class='pagination float-right'>" +
                         "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
@@ -48,32 +48,36 @@ export default class ShopView{
         
     }
 
+    //Add events to all the buttons
     private addOptions(){
         let options = this.pageOptions;
         $("#mainContent .divProducts input").each(function(){
             let id:number  = Number((<HTMLInputElement>this).value);
-            
+
+            //If basket view
             if (options == "basket"){
                 $(this).addClass("btn-danger");
                 (<HTMLInputElement>this).value = "Retirer du panier";
                 $(this).on("click", function(){
+                    //Remove item from basket
                     new Basket().removeItem(id);
                     $(this).parent().parent().parent().remove();
                 });
             }
-            else if (options == "index") {
+            else if (options == "index") {//If index view
                 $(this).addClass("btn-primary");
                 (<HTMLInputElement>this).value = "Ajouter au panier";
                 $(this).on("click", function(){
+                    //Add item to basket
                     new Basket().addItem(id);
-                    alert("produit ajouté au pannier");
+                    alert("Produit ajouté au panier.");
                 });
             }
         });
     }
 
+    //Add all the events to the pagination
     private addPagination(page:number){
-        let shopView:ShopView = this;
         if(page != 0){
             $("#mainContent .prev").on("click", function(){document.location.href = "?p=" + (page - 1);});
         }else{

@@ -1,40 +1,35 @@
 import * as $ from "jquery";
-import { ItemModel } from "../Model/itemModel";
-import Basket from "../Model/Basket"
+import { ItemModel,Basket } from "../export";
 
-export default class ItemView{
-    pageOptions:String;
-
+export class ItemView{
+    //Display the view of an item
     public displayItem (product:ItemModel){
         let html = "";
-        
-            html += "<div class='divProduct' id='divProduct'>"+
-                        "<div class='card'>"+
-                            "<img src='" + product.image + "' class='card-img-top'/>"+
-                            "<div class='card-body text-center'>"+
-                                "<h3 class='card-title'><a href='?page=detail&id=" + product.id + "'>" + product.nom+"</a></h3>"+
-                                "<p class='card-text'>" + product.description + "</p>" +
-                                "<p class='card-text'>Prix: " + product.prix+"$</p>" +
-                                "<input type='button' class='btn' value='" +product.id+"' />" +
-                            "</div>" +
+
+            html += "<h2>Description</h2>" +
+                    "<div class=\"media my-3 border rounded\" id='divDescProduit'>" +
+                        "<img class=\"img-fluid rounded\" src=\""+product.image+"\"/>" +
+                        "<div class=\"media-body mx-3\">" +
+                            "<h1>" + product.nom+"</h1>" +
+                            "<div><b>Prix:</b> "+product.prix + "$</div>" +
+                            "<p>"+ product.description +"</p>" +
+                            "<div><input type=\"button\" class=\"btn btn-primary\" value='Ajouter au panier'/></div>" +
                         "</div>" +
                     "</div>";
 
             $("#mainContent").html(html);
             this.addOptions();
     }
-        
 
     private addOptions(){
-        let options = this.pageOptions;
         $("#mainContent .divProduct input").each(function(){
             let id:number  = Number((<HTMLInputElement>this).value);
 
-            $(this).addClass("btn-primary");
-            (<HTMLInputElement>this).value = "Ajouter au panier";
+            //Add click event to add basket button
             $(this).on("click", function(){
+                    //Add item to basket
                     new Basket().addItem(id);
-                    alert("produit ajouté au pannier");
+                    alert("Produit ajouté au panier.");
             });
         });
     }
