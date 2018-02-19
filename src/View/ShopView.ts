@@ -26,12 +26,13 @@ export default class ShopView{
                         "</div>" +
                     "</div>";
         }
-        
+        if (this.pageOptions == "basket")
+        html+= "<div class=\"text-left\"><input type=\"button\" class=\"btn btn-success mt-3\" value=\"Payer\" id=\"payer\"/></div>";
         
         html += "<div class='w-100 text-right' id='divPagination'>" +
                     "<ul class='pagination float-right'>" +
                         "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
-
+        
 
         for(let y = 1;y < Math.ceil(this.products.length / 10) + 1; y++){
             let active:string = "";
@@ -70,6 +71,15 @@ export default class ShopView{
                 });
             }
         });
+
+        if (options == "basket"){
+            $("#payer").on("click",function(){
+                new Basket().clear();
+                alert("votre panier a été payé avec success.");
+                document.location.href = "?";
+            })
+        }
+
     }
 
     private addPagination(page:number){
