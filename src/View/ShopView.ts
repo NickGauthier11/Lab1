@@ -11,37 +11,42 @@ export class ShopView{
     }
 
     //Display all items of the shop
-    public displayPage (page:number){
+    public displayPage (page:number) {
         let html = "";
-        
-        for(let i = (page * 10); i < (page * 10) + 10 && i < this.products.length; i++){
-            html += "<div class='float-left p-3 divProducts' id='divProduct'>"+
-                        "<div class='card'>"+
-                            "<img src='" + this.products[i].image + "' class='card-img-top'/>"+
-                            "<div class='card-body text-center'>"+
-                                "<h3 class='card-title'><a href='?page=detail&id=" + this.products[i].id + "'>" + this.products[i].nom+"</a></h3>"+
-                                "<p class='card-text'>Prix: "+this.products[i].prix+"$</p>" +
-                                "<input type='button' class='btn' value='"+this.products[i].id+"' />" +
-                            "</div>" +
-                        "</div>" +
-                    "</div>";
-        }
-        if (this.pageOptions == "basket")
-        html+= "<div class=\"text-left\"><input type=\"button\" class=\"btn btn-success mt-3\" value=\"Payer\" id=\"payer\"/></div>";
-        
-        html += "<div class='w-100 text-right' id='divPagination'>" +
-                    "<ul class='pagination float-right'>" +
-                        "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
-        
 
-        for(let y = 1;y < Math.ceil(this.products.length / 10) + 1; y++){
-            let active:string = "";
-            if (page == y - 1)
-                active = " active";
-            html += "<li class='page-item" + active + "'><a class='page-link page-number'>"+y+"</a></li>";
+        if (this.products.length > 0) {
+            for (let i = (page * 10); i < (page * 10) + 10 && i < this.products.length; i++) {
+                html += "<div class='float-left p-3 divProducts' id='divProduct'>" +
+                    "<div class='card'>" +
+                    "<img src='" + this.products[i].image + "' class='card-img-top'/>" +
+                    "<div class='card-body text-center'>" +
+                    "<h3 class='card-title'><a href='?page=detail&id=" + this.products[i].id + "'>" + this.products[i].nom + "</a></h3>" +
+                    "<p class='card-text'>Prix: " + this.products[i].prix + "$</p>" +
+                    "<input type='button' class='btn' value='" + this.products[i].id + "' />" +
+                    "</div>" +
+                    "</div>" +
+                    "</div>";
+            }
+            html += "<div class='w-100 text-right' id='divPagination'>" +
+                "<ul class='pagination float-right'>" +
+                "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
+
+
+            for(let y = 1;y < Math.ceil(this.products.length / 10) + 1; y++){
+                let active:string = "";
+                if (page == y - 1)
+                    active = " active";
+                html += "<li class='page-item" + active + "'><a class='page-link page-number'>"+y+"</a></li>";
+            }
+
+            html += "<li class='page-item next'><a class='page-link'>Suivant</a></li>" ;
+            html += "</ul>" + "</div>";
+
+            if (this.pageOptions == "basket")
+                html+= "<div class=\"text-left w-100\" style='clear:both'><input type=\"button\" class=\"btn btn-success mt-3 float-right\" value=\"Payer\" id=\"payer\"/></div>";
+        }else{
+            html += "<div class='w-100 border rounded text-center p-3'>Aucun produit</div>";
         }
-        html += "<li class='page-item next'><a class='page-link'>Suivant</a></li>" ;
-        html += "</ul>" + "</div>";
 
         $("#mainContent").html(html);
         this.addPagination(page);
