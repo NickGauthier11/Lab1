@@ -42,3 +42,7 @@
     width:10%;
     min-width:80px;
 }
+#divDescProduit img{
+    width:25%;
+    min-width:160px;
+}

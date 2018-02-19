@@ -5,5 +5,4 @@ import ItemView from "../View/ItemView"
 export default function edit(id:number){
     let produit:ItemModel = new Shop().getItemFromId(id);
     new ItemView().displayItem(produit);
-    
 }
