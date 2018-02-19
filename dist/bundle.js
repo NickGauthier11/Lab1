@@ -80,16 +80,16 @@ var Shop = /** @class */function () {
     }
     Shop.prototype.addItem = function (name, image, price, description) {
         var id = Number(localStorage.lastId);
-        this.products[String(id)] = new export_1.ItemModel(id, "produit " + id, "Images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", price, description);
+        this.products[id] = new export_1.ItemModel(id, "produit " + id, "images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", price, description);
         this.saveModifications();
         id++;
         localStorage.lastId = id;
     };
     Shop.prototype.addRandomItem = function () {
-        this.addItem("nouveau produit ", "Images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", 10, "nouvel objet ajouté récement");
+        this.addItem("nouveau produit ", "images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", 10, "nouvel objet ajouté récement");
     };
     Shop.prototype.removeItem = function (id) {
-        delete this.products[String(id)];
+        delete this.products[id];
         this.saveModifications();
     };
     Shop.prototype.modifyItem = function (id, name, image, price, description) {
@@ -103,14 +103,21 @@ var Shop = /** @class */function () {
     Shop.prototype.saveModifications = function () {
         localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
     };
+    Shop.prototype.getProducts = function () {
+        var products = [];
+        this.products.forEach(function (element) {
+            if (element != null) products.push(element);
+        });
+        return products;
+    };
     Shop.prototype.createDatabase = function () {
         this.products = [];
-        for (var i = 0; i < 100; i++) this.products[String(i)] = new export_1.ItemModel(i, "produit " + (i + 1), "Images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", (i * 3 + 12 * 1 - 2) % 1026, "description du produit " + (i + 1));
+        for (var i = 0; i < 100; i++) this.products[i] = new export_1.ItemModel(i, "produit " + (i + 1), "images/img" + (Math.floor(Math.random() * 10) + 1) + ".jpg", (i * 3 + 12 * 1 - 2) % 1026, "description du produit " + (i + 1));
         localStorage.setItem("shop", JSON.stringify({ produits: this.products }));
         localStorage.setItem("lastId", "100");
     };
     Shop.prototype.getItemFromId = function (id) {
-        return this.products[String(id)];
+        return this.products[id];
     };
     return Shop;
 }();
@@ -10526,13 +10533,12 @@ var base_2 = __webpack_require__(9);
 exports.Model = base_2.Model;
 var base_3 = __webpack_require__(10);
 exports.Controller = base_3.Controller;
-var itemView_1 = __webpack_require__(11);
-exports.ItemView = itemView_1.ItemView;
-var itemModel_1 = __webpack_require__(12);
+// export { ItemView } from "./View/itemView";
+var itemModel_1 = __webpack_require__(11);
 exports.ItemModel = itemModel_1.ItemModel;
-var itemController_1 = __webpack_require__(13);
+var itemController_1 = __webpack_require__(12);
 exports.ItemController = itemController_1.ItemController;
-var ConnectionView_1 = __webpack_require__(14);
+var ConnectionView_1 = __webpack_require__(13);
 exports.ConnectionView = ConnectionView_1.ConnectionView;
 // export { Shop } from "./Model/Shop";
 // export { Basket } from "./Model/Basket";
@@ -10608,7 +10614,7 @@ var ShopView = /** @class */function () {
     ShopView.prototype.displayPage = function (page) {
         var html = "";
         for (var i = page * 10; i < page * 10 + 10 && i < this.products.length; i++) {
-            html += "<div class='float-left p-3 divProducts''>" + "<div class='card'>" + "<img src='" + this.products[i].image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='?page=detail&id=" + this.products[i].id + "'>" + this.products[i].nom + "</a></h3>" + "<p class='card-text'>Prix: " + this.products[i].prix + "$</p>" + "<input type='button' class='btn' value='" + this.products[i].id + "' />" + "</div>" + "</div>" + "</div>";
+            html += "<div class='float-left p-3 divProducts' id='divProduct'>" + "<div class='card'>" + "<img src='" + this.products[i].image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='?page=detail&id=" + this.products[i].id + "'>" + this.products[i].nom + "</a></h3>" + "<p class='card-text'>Prix: " + this.products[i].prix + "$</p>" + "<input type='button' class='btn' value='" + this.products[i].id + "' />" + "</div>" + "</div>" + "</div>";
         }
         html += "<div class='w-100 text-right' id='divPagination'>" + "<ul class='pagination float-right'>" + "<li class='page-item prev'><a class='page-link'>Précédent</a></li>";
         for (var y = 1; y < Math.ceil(this.products.length / 10) + 1; y++) {
@@ -10646,23 +10652,23 @@ var ShopView = /** @class */function () {
     ShopView.prototype.addPagination = function (page) {
         var shopView = this;
         if (page != 0) {
-            $("#mainContent .prev").on("click", { view: shopView }, function (event) {
-                event.data.view.displayPage(page - 1);
+            $("#mainContent .prev").on("click", function () {
+                document.location.href = "?p=" + (page - 1);
             });
         } else {
             $("#mainContent .prev").addClass("disabled");
         }
         if (page < Math.ceil(this.products.length / 10) - 1) {
-            $("#mainContent .next").on("click", { view: shopView }, function (event) {
-                event.data.view.displayPage(page + 1);
+            $("#mainContent .next").on("click", function () {
+                document.location.href = "?p=" + (page + 1);
             });
         } else {
             $("#mainContent .next").addClass("disabled");
         }
         $("#mainContent .page-number").each(function () {
             var page = Number(this.innerText);
-            $(this).on("click", { view: shopView }, function (event) {
-                event.data.view.displayPage(page - 1);
+            $(this).on("click", function () {
+                document.location.href = "?p=" + (page - 1);
             });
         });
     };
@@ -10679,15 +10685,19 @@ exports.default = ShopView;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var connection_1 = __webpack_require__(7);
-var panier_1 = __webpack_require__(15);
-var edit_1 = __webpack_require__(16);
-var description_1 = __webpack_require__(17);
-var index_1 = __webpack_require__(18);
+var panier_1 = __webpack_require__(14);
+var edit_1 = __webpack_require__(15);
+var description_1 = __webpack_require__(16);
+var index_1 = __webpack_require__(17);
 function getURLParameter(name) {
     return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
 }
 var item = Number(getURLParameter("id"));
 var page = getURLParameter("page");
+var p;
+if (getURLParameter("p") == "") {
+    p = 0;
+} else p = Number(getURLParameter("p"));
 switch (page) {
     case "panier":
         panier_1.default();
@@ -10702,7 +10712,7 @@ switch (page) {
         description_1.default(item);
         break;
     default:
-        index_1.default();
+        index_1.default(p);
         break;
 }
 
@@ -10724,7 +10734,7 @@ function connection() {
     var shop = new Shop_1.default();
     //Different page if connected or not
     if (Connection_1.isUserAdmin()) {
-        view.connected(shop.products);
+        view.connected(shop.getProducts());
     } else {
         view.connection();
     }
@@ -10834,24 +10844,6 @@ exports.Controller = Controller;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
-var $ = __webpack_require__(1);
-var ItemView = /** @class */function () {
-    function ItemView(controller) {
-        this.controller = controller;
-        $("#mainContent").html("<div class='row m-5'>" + "<div class='col-3 text-center'><img class='align-middle' src='" + this.controller.itemModel.image + "'/></div>" + "<div class='col-8' style='height:500px'>" + "<h1 class='h-20'>" + this.controller.itemModel.nom + "</h1>" + "<p class='h-60'>" + this.controller.itemModel.description + "</p>" + "<div class='align-bottom h-20'>" + this.controller.itemModel.prix + " $</div>" + "</div>" + "</div>");
-    }
-    return ItemView;
-}();
-exports.ItemView = ItemView;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", { value: true });
 var ItemModel = /** @class */function () {
     function ItemModel(id, nom, image, prix, description) {
         this.id = id;
@@ -10871,7 +10863,7 @@ var ItemModel = /** @class */function () {
 exports.ItemModel = ItemModel;
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10887,7 +10879,7 @@ var ItemController = /** @class */function () {
 exports.ItemController = ItemController;
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10949,7 +10941,7 @@ var ConnectionView = /** @class */function () {
 exports.ConnectionView = ConnectionView;
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10966,6 +10958,22 @@ function panier() {
 exports.default = panier;
 
 /***/ }),
+/* 15 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var Shop_1 = __webpack_require__(0);
+var ItemEditView_1 = __webpack_require__(19);
+function edit(id) {
+    var produit = new Shop_1.default().getItemFromId(id);
+    new ItemEditView_1.default().showItem(produit);
+}
+exports.default = edit;
+
+/***/ }),
 /* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -10974,9 +10982,10 @@ exports.default = panier;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Shop_1 = __webpack_require__(0);
+var ItemView_1 = __webpack_require__(18);
 function edit(id) {
     var produit = new Shop_1.default().getItemFromId(id);
-    //New view made for editing
+    new ItemView_1.default().displayItem(produit);
 }
 exports.default = edit;
 
@@ -10989,11 +10998,13 @@ exports.default = edit;
 
 Object.defineProperty(exports, "__esModule", { value: true });
 var Shop_1 = __webpack_require__(0);
-function edit(id) {
-    var produit = new Shop_1.default().getItemFromId(id);
-    //New view made for viewing
+var ShopView_1 = __webpack_require__(5);
+function index(p) {
+    var shop = new Shop_1.default();
+    var shopView = new ShopView_1.default(shop.getProducts(), "index");
+    shopView.displayPage(p);
 }
-exports.default = edit;
+exports.default = index;
 
 /***/ }),
 /* 18 */
@@ -11003,14 +11014,59 @@ exports.default = edit;
 
 
 Object.defineProperty(exports, "__esModule", { value: true });
+var $ = __webpack_require__(1);
+var Basket_1 = __webpack_require__(4);
+var ItemView = /** @class */function () {
+    function ItemView() {}
+    ItemView.prototype.displayItem = function (product) {
+        var html = "";
+        html += "<div class='divProduct' id='divProduct'>" + "<div class='card'>" + "<img src='" + product.image + "' class='card-img-top'/>" + "<div class='card-body text-center'>" + "<h3 class='card-title'><a href='?page=detail&id=" + product.id + "'>" + product.nom + "</a></h3>" + "<p class='card-text'>" + product.description + "</p>" + "<p class='card-text'>Prix: " + product.prix + "$</p>" + "<input type='button' class='btn' value='" + product.id + "' />" + "</div>" + "</div>" + "</div>";
+        $("#mainContent").html(html);
+        this.addOptions();
+    };
+    ItemView.prototype.addOptions = function () {
+        var options = this.pageOptions;
+        $("#mainContent .divProduct input").each(function () {
+            var id = Number(this.value);
+            $(this).addClass("btn-primary");
+            this.value = "Ajouter au panier";
+            $(this).on("click", function () {
+                new Basket_1.default().addItem(id);
+                alert("produit ajouté au pannier");
+            });
+        });
+    };
+    return ItemView;
+}();
+exports.default = ItemView;
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", { value: true });
+var $ = __webpack_require__(1);
 var Shop_1 = __webpack_require__(0);
-var ShopView_1 = __webpack_require__(5);
-function index() {
-    var shop = new Shop_1.default();
-    var shopView = new ShopView_1.default(shop.products, "index");
-    shopView.displayPage(0);
-}
-exports.default = index;
+var ItemEditView = /** @class */function () {
+    function ItemEditView() {}
+    ItemEditView.prototype.showItem = function (product) {
+        var html = "<div class=\"alert alert-danger\" role=\"alert\" id='alertConnectionError' style='display:none'></div>" + "<div class=\"form-group mx-auto border rounded w-25 p-3\">" + "<h3>Modification de : " + product.nom + "</h3>" + "<label for=\"nom\">Nom:</label><input type=\"text\" class=\"form-control\" id=\"nom\" value=\"" + product.nom + "\" />" + "<label for=\"image\">Image: </label><input type=\"text\" class=\"form-control\" id=\"image\" value=\"" + product.image + "\"/> " + "<label for=\"prix\">Prix:</label><input type=\"number\" class=\"form-control\" id=\"prix\" value=\"" + product.prix + "\"/>" + "<label for=\"description\">Description:</label><input type=\"text\" class=\"form-control\" id=\"description\" value=\"" + product.description + "\"/>" + "<div class=\"text-right\"><input type=\"button\" class=\"btn btn-primary mt-3 connectionButton\" value=\"Modifier\" id='btnValidation'/></div>" + "</div>";
+        $("#mainContent").html(html);
+        $("#btnValidation").on("click", function () {
+            var nom = String($("#nom").val());
+            var image = String($("#image").val());
+            var prix = Number($("#prix").val());
+            var description = String($("#description").val());
+            new Shop_1.default().modifyItem(product.id, nom, image, prix, description);
+            document.location.href = "?page=connexion";
+        });
+    };
+    return ItemEditView;
+}();
+exports.default = ItemEditView;
 
 /***/ })
 /******/ ]);

@@ -75,19 +75,19 @@ export default class ShopView{
     private addPagination(page:number){
         let shopView:ShopView = this;
         if(page != 0){
-            $("#mainContent .prev").on("click",{view:shopView}, function(event){event.data.view.displayPage(page - 1);});
+            $("#mainContent .prev").on("click", function(){document.location.href = "?p=" + (page - 1);});
         }else{
             $("#mainContent .prev").addClass("disabled");
         }
         if(page < Math.ceil(this.products.length / 10) - 1){
-            $("#mainContent .next").on("click",{view:shopView}, function(event){event.data.view.displayPage(page + 1);});
+            $("#mainContent .next").on("click", function(){document.location.href = "?p=" + (page + 1);});
         }else{
             $("#mainContent .next").addClass("disabled");
         }
 
         $("#mainContent .page-number").each(function(){
             let page:number = Number(this.innerText);
-            $(this).on("click",{view:shopView}, function(event){event.data.view.displayPage(page - 1);});
+            $(this).on("click", function(){document.location.href = "?p=" + (page - 1);});
         });
     }
 }

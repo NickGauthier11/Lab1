@@ -10,7 +10,7 @@ export default function connection(){
 
     //Different page if connected or not
     if( isUserAdmin() ){
-        view.connected(shop.products);
+        view.connected(shop.getProducts());
     }else{
         view.connection();
     }

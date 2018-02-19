@@ -14,10 +14,10 @@ export default class Shop {
 
     public addItem (name:string, image:string, price:number, description:string) {
         let id = Number(localStorage.lastId);
-        this.products[ String(id) ] =  new ItemModel(
+        this.products[id] =  new ItemModel(
             id,
             "produit " + id,
-            "Images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
+            "images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
             price,
             description
         );
@@ -29,13 +29,13 @@ export default class Shop {
     public addRandomItem(){
         this.addItem(
             "nouveau produit ",
-            "Images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
+            "images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
             10,
             "nouvel objet ajouté récement");
     }
 
     public removeItem (id:number) {
-        delete this.products[String(id)];
+        delete this.products[id];
         this.saveModifications();
     }
 
@@ -52,14 +52,23 @@ export default class Shop {
         localStorage.setItem("shop", JSON.stringify({ produits: this.products}));
     }
 
+    public getProducts() : ItemModel[]{
+        let products:ItemModel[] = [];
+        this.products.forEach(function(element){
+            if(element != null)
+                products.push(element);
+        })
+        return products;
+    }
+
     private createDatabase(){
         this.products = [];
 
         for (let i = 0; i < 100; i++)
-            this.products[String(i)] = new ItemModel(
+            this.products[i] = new ItemModel(
                 i,
                 "produit " + (i + 1),
-                "Images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
+                "images/img"+(Math.floor(Math.random() * 10) + 1)+".jpg",
                 (i * 3 + 12 * 1 - 2) % 1026,
                 "description du produit " + (i + 1)
             );
@@ -68,7 +77,7 @@ export default class Shop {
     }
 
     public getItemFromId(id:number) : ItemModel{
-        return this.products[String(id)];
+        return this.products[id];
     }
 
     

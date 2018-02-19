@@ -28,6 +28,7 @@ export class ConnectionView{
 
     }
     connected(products:ItemModel[]){
+        
         let html = "<h2>Administration</h2>" +
                     "<div class=\"border rounded-top\">" +
                         "<table id=\"tableAdmin\" class=\"table table-sm text-left m-0\">" +

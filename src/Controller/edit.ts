@@ -1,8 +1,9 @@
 import Shop from "../Model/Shop"
 import {ItemModel} from "../Model/itemModel"
+import ItemEditView from "../View/ItemEditView"
 
 export default function edit(id:number){
     let produit:ItemModel = new Shop().getItemFromId(id);
-    //New view made for editing
+    new ItemEditView().showItem(produit);
     
 }
